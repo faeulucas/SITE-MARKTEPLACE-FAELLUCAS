@@ -1,5 +1,7 @@
 export { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 
+export const LOGIN_ROUTE = "/entrar";
+
 export const hasOAuthConfig = () =>
   Boolean(import.meta.env.VITE_OAUTH_PORTAL_URL && import.meta.env.VITE_APP_ID);
 

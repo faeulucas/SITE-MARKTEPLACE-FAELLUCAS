@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+import { LOGIN_ROUTE } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import {
@@ -106,7 +106,7 @@ export default function Header({ selectedCity, onCityChange, onSearch }: HeaderP
           {/* Actions */}
           <div className="flex items-center gap-2 shrink-0">
             {/* Anunciar button */}
-            <Link href={isAuthenticated ? "/anunciante/novo" : getLoginUrl()}>
+            <Link href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE}>
               <Button className="bg-orange-gradient text-white font-bold rounded-xl shadow-md hover:opacity-90 hidden sm:flex items-center gap-1.5 px-4">
                 <Plus className="w-4 h-4" />
                 Anunciar
@@ -154,7 +154,7 @@ export default function Header({ selectedCity, onCityChange, onSearch }: HeaderP
                 </DropdownMenu>
               </>
             ) : (
-              <Link href={getLoginUrl()}>
+              <Link href={LOGIN_ROUTE}>
                 <Button variant="outline" className="rounded-xl border-blue-200 text-blue-700 hover:bg-blue-50 font-semibold hidden sm:flex items-center gap-1.5">
                   <User className="w-4 h-4" />
                   Entrar
@@ -195,13 +195,13 @@ export default function Header({ selectedCity, onCityChange, onSearch }: HeaderP
               </SelectContent>
             </Select>
           </div>
-          <Link href={isAuthenticated ? "/anunciante/novo" : getLoginUrl()}>
+          <Link href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE}>
             <Button className="w-full bg-orange-gradient text-white font-bold rounded-xl">
               <Plus className="w-4 h-4 mr-2" /> Anunciar Grátis
             </Button>
           </Link>
           {!isAuthenticated && (
-            <Link href={getLoginUrl()}>
+            <Link href={LOGIN_ROUTE}>
               <Button variant="outline" className="w-full rounded-xl">
                 <User className="w-4 h-4 mr-2" /> Entrar / Cadastrar
               </Button>

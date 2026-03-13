@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+import { LOGIN_ROUTE } from "@/const";
 import { trpc } from "@/lib/trpc";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -83,7 +83,7 @@ export default function AdvertiserDashboard() {
           </div>
           <h2 className="font-display text-2xl font-bold text-gray-800">Acesse seu painel</h2>
           <p className="mt-3 text-gray-500">Entre para visualizar seus anuncios, desempenho e favoritos.</p>
-          <Link href={getLoginUrl()}>
+          <Link href={LOGIN_ROUTE}>
             <Button className="mt-6 rounded-xl bg-brand-gradient px-8 py-3 text-white">
               Entrar / Cadastrar
             </Button>

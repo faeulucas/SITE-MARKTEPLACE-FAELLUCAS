@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+import { LOGIN_ROUTE } from "@/const";
 import { trpc } from "@/lib/trpc";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -88,7 +88,7 @@ export default function NewListing() {
       <Header />
       <div className="container py-20 text-center">
         <h2 className="font-display text-2xl font-bold text-gray-700 mb-4">Faça login para anunciar</h2>
-        <Link href={getLoginUrl()}><Button className="bg-brand-gradient text-white rounded-xl px-8">Entrar</Button></Link>
+        <Link href={LOGIN_ROUTE}><Button className="bg-brand-gradient text-white rounded-xl px-8">Entrar</Button></Link>
       </div>
       <Footer />
     </div>

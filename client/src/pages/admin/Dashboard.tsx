@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+import { LOGIN_ROUTE } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -78,7 +78,7 @@ export default function AdminDashboard() {
           <Shield className="mx-auto mb-4 h-16 w-16 text-blue-400" />
           <h1 className="font-display text-3xl font-black">Area administrativa</h1>
           <p className="mt-3 text-gray-400">Entre com uma conta autorizada para acessar o painel.</p>
-          <Link href={getLoginUrl()}>
+          <Link href={LOGIN_ROUTE}>
             <Button className="mt-6 rounded-2xl bg-brand-gradient px-8 text-white">
               <LogIn className="mr-2 h-4 w-4" />
               Entrar

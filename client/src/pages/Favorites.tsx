@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
+import { LOGIN_ROUTE } from "@/const";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ListingCard from "@/components/ListingCard";
@@ -21,7 +21,7 @@ export default function FavoritesPage() {
           <Heart className="w-16 h-16 text-red-200 mx-auto mb-4" />
           <h2 className="font-display text-2xl font-bold text-gray-700 mb-3">Seus favoritos</h2>
           <p className="text-gray-500 mb-6">Faça login para ver seus anúncios favoritos</p>
-          <Link href={getLoginUrl()}>
+          <Link href={LOGIN_ROUTE}>
             <Button className="bg-brand-gradient text-white rounded-xl px-8">
               <LogIn className="w-4 h-4 mr-2" /> Entrar
             </Button>

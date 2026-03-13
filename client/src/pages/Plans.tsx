@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+import { LOGIN_ROUTE } from "@/const";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -134,7 +134,7 @@ export default function PlansPage() {
                   ))}
                 </ul>
 
-                <Link href={isAuthenticated ? "/anunciante" : getLoginUrl()}>
+                <Link href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE}>
                   <Button className={`w-full rounded-xl py-5 font-bold text-base ${plan.btnClass}`}>
                     {plan.price === 0 ? "Começar Grátis" : "Assinar Agora"}
                   </Button>
@@ -172,7 +172,7 @@ export default function PlansPage() {
                   <span className="text-2xl font-black text-gray-900">R$ {b.price.toFixed(2).replace(".", ",")}</span>
                   <span className="text-gray-500 text-sm">/{b.days} dias</span>
                 </div>
-                <Link href={isAuthenticated ? "/anunciante" : getLoginUrl()}>
+                <Link href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE}>
                   <Button className="w-full bg-orange-gradient text-white rounded-xl font-bold hover:opacity-90">
                     Ativar Booster
                   </Button>

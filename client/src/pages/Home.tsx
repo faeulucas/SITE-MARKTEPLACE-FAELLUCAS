@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+import { LOGIN_ROUTE } from "@/const";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ListingCard from "@/components/ListingCard";
@@ -121,7 +121,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link href={isAuthenticated ? "/anunciante/novo" : getLoginUrl()}>
+              <Link href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE}>
                 <Button className="bg-orange-gradient text-white font-bold px-8 py-6 text-lg rounded-2xl shadow-xl hover:opacity-90 transition-opacity">
                   <Zap className="w-5 h-5 mr-2" />
                   Anunciar Grátis
@@ -249,7 +249,7 @@ export default function Home() {
             <div className="text-center py-12 bg-white rounded-2xl">
               <Utensils className="w-12 h-12 text-red-200 mx-auto mb-3" />
               <p className="text-gray-500 mb-4">Seja o primeiro a anunciar nesta categoria!</p>
-              <Link href={isAuthenticated ? "/anunciante/novo" : getLoginUrl()}>
+              <Link href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE}>
                 <Button className="bg-red-500 text-white rounded-xl hover:bg-red-600">Anunciar Grátis</Button>
               </Link>
             </div>
@@ -281,7 +281,7 @@ export default function Home() {
             <div className="text-center py-12 bg-white rounded-2xl">
               <ShoppingBag className="w-12 h-12 text-orange-200 mx-auto mb-3" />
               <p className="text-gray-500 mb-4">Nenhum delivery cadastrado ainda. Seja o primeiro!</p>
-              <Link href={isAuthenticated ? "/anunciante/novo" : getLoginUrl()}>
+              <Link href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE}>
                 <Button className="bg-orange-500 text-white rounded-xl hover:bg-orange-600">Anunciar Grátis</Button>
               </Link>
             </div>
@@ -323,7 +323,7 @@ export default function Home() {
             </div>
             <h3 className="font-display font-bold text-gray-700 text-lg mb-2">Nenhum anúncio ainda</h3>
             <p className="text-gray-500 mb-6">Seja o primeiro a anunciar no Norte Vivo!</p>
-            <Link href={isAuthenticated ? "/anunciante/novo" : getLoginUrl()}>
+            <Link href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE}>
               <Button className="bg-brand-gradient text-white rounded-xl px-8">
                 <Zap className="w-4 h-4 mr-2" /> Anunciar Grátis
               </Button>
@@ -436,7 +436,7 @@ export default function Home() {
             <p className="text-orange-100 text-lg mb-6 max-w-xl mx-auto">
               Apareça no topo das buscas, ganhe destaque na home e receba até 10x mais contatos. A partir de R$ 19,90.
             </p>
-            <Link href={isAuthenticated ? "/anunciante" : getLoginUrl()}>
+            <Link href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE}>
               <Button className="bg-white text-orange-600 font-black px-10 py-4 text-lg rounded-2xl hover:bg-orange-50 shadow-xl">
                 <Zap className="w-5 h-5 mr-2" />
                 Ativar Booster Agora
@@ -484,7 +484,7 @@ export default function Home() {
             <Tag className="w-5 h-5" />
             <span className="text-xs">Buscar</span>
           </Link>
-          <Link href={isAuthenticated ? "/anunciante/novo" : getLoginUrl()} className="flex flex-col items-center gap-0.5 px-3 py-1">
+          <Link href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE} className="flex flex-col items-center gap-0.5 px-3 py-1">
             <div className="w-12 h-12 bg-orange-gradient rounded-2xl flex items-center justify-center -mt-5 shadow-lg">
               <Zap className="w-6 h-6 text-white" />
             </div>
@@ -494,7 +494,7 @@ export default function Home() {
             <Heart className="w-5 h-5" />
             <span className="text-xs">Favoritos</span>
           </Link>
-          <Link href={isAuthenticated ? "/anunciante" : getLoginUrl()} className="flex flex-col items-center gap-0.5 text-gray-500 px-3 py-1">
+          <Link href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE} className="flex flex-col items-center gap-0.5 text-gray-500 px-3 py-1">
             <Users className="w-5 h-5" />
             <span className="text-xs">Perfil</span>
           </Link>
