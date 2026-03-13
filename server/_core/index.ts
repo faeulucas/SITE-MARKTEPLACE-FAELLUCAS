@@ -8,19 +8,62 @@ import { createContext } from "./context";
 import { ENV } from "./env";
 import { serveStatic, setupVite } from "./vite";
 
+function normalizeOrigin(origin: string) {
+  return origin.replace(/\/+$/, "");
+}
+
+function buildAllowedOrigins() {
+  return [
+    ENV.frontendUrl,
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+  ]
+    .filter(Boolean)
+    .map(origin => normalizeOrigin(origin));
+}
+
+function isAllowedOrigin(origin: string) {
+  const normalizedOrigin = normalizeOrigin(origin);
+  const allowedOrigins = new Set(buildAllowedOrigins());
+
+  if (allowedOrigins.has(normalizedOrigin)) {
+    return true;
+  }
+
+  try {
+    const frontendUrl = ENV.frontendUrl ? new URL(ENV.frontendUrl) : null;
+    const requestUrl = new URL(normalizedOrigin);
+
+    if (
+      frontendUrl &&
+      frontendUrl.hostname.endsWith(".vercel.app") &&
+      requestUrl.hostname.endsWith(".vercel.app")
+    ) {
+      const frontendProject = frontendUrl.hostname.replace(".vercel.app", "");
+      const requestProject = requestUrl.hostname.replace(".vercel.app", "");
+
+      return (
+        requestProject === frontendProject ||
+        requestProject.startsWith(`${frontendProject}-`)
+      );
+    }
+  } catch {
+    return false;
+  }
+
+  return false;
+}
+
 async function startServer() {
   const app = express();
   const server = createServer(app);
 
   app.use((req, res, next) => {
     const requestOrigin = req.headers.origin;
-    const allowedOrigins = new Set(
-      [ENV.frontendUrl, "http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000", "http://127.0.0.1:3001"]
-        .filter(Boolean)
-        .map(origin => origin.replace(/\/+$/, ""))
-    );
 
-    if (requestOrigin && allowedOrigins.has(requestOrigin.replace(/\/+$/, ""))) {
+    if (requestOrigin && isAllowedOrigin(requestOrigin)) {
       res.header("Access-Control-Allow-Origin", requestOrigin);
       res.header("Vary", "Origin");
       res.header("Access-Control-Allow-Credentials", "true");
