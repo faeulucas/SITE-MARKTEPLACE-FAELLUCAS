@@ -9,4 +9,10 @@ export const ENV = {
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   frontendUrl: process.env.FRONTEND_URL ?? "",
   publicApiUrl: process.env.PUBLIC_API_URL ?? "",
+  r2AccountId: process.env.R2_ACCOUNT_ID ?? "",
+  r2AccessKeyId: process.env.R2_ACCESS_KEY_ID ?? "",
+  r2SecretAccessKey: process.env.R2_SECRET_ACCESS_KEY ?? "",
+  r2Bucket: process.env.R2_BUCKET ?? "",
+  r2PublicUrl: process.env.R2_PUBLIC_URL ?? "",
+  r2Endpoint: process.env.R2_ENDPOINT ?? "",
 };

@@ -1,9 +1,89 @@
-// Preconfigured storage helpers for Manus WebDev templates
-// Uses the Biz-provided storage proxy (Authorization: Bearer <token>)
-
-import { ENV } from './_core/env';
+import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { ENV } from "./_core/env";
 
 type StorageConfig = { baseUrl: string; apiKey: string };
+
+function ensureTrailingSlash(value: string): string {
+  return value.endsWith("/") ? value : `${value}/`;
+}
+
+function normalizeKey(relKey: string): string {
+  return relKey.replace(/^\/+/, "");
+}
+
+function toContentBody(data: Buffer | Uint8Array | string) {
+  if (typeof data === "string") {
+    return Buffer.from(data);
+  }
+  return Buffer.from(data);
+}
+
+function hasR2Config() {
+  return Boolean(
+    ENV.r2AccessKeyId &&
+      ENV.r2SecretAccessKey &&
+      ENV.r2Bucket &&
+      (ENV.r2Endpoint || ENV.r2AccountId)
+  );
+}
+
+function getR2Client() {
+  const endpoint =
+    ENV.r2Endpoint ||
+    `https://${ENV.r2AccountId}.r2.cloudflarestorage.com`;
+
+  return new S3Client({
+    region: "auto",
+    endpoint,
+    credentials: {
+      accessKeyId: ENV.r2AccessKeyId,
+      secretAccessKey: ENV.r2SecretAccessKey,
+    },
+  });
+}
+
+function getPublicR2Url(key: string) {
+  if (!ENV.r2PublicUrl) {
+    return null;
+  }
+
+  return new URL(normalizeKey(key), ensureTrailingSlash(ENV.r2PublicUrl)).toString();
+}
+
+async function storagePutR2(
+  relKey: string,
+  data: Buffer | Uint8Array | string,
+  contentType = "application/octet-stream"
+): Promise<{ key: string; url: string }> {
+  const key = normalizeKey(relKey);
+  const client = getR2Client();
+
+  await client.send(
+    new PutObjectCommand({
+      Bucket: ENV.r2Bucket,
+      Key: key,
+      Body: toContentBody(data),
+      ContentType: contentType,
+    })
+  );
+
+  const publicUrl = getPublicR2Url(key);
+  if (publicUrl) {
+    return { key, url: publicUrl };
+  }
+
+  const signedUrl = await getSignedUrl(
+    client,
+    new GetObjectCommand({
+      Bucket: ENV.r2Bucket,
+      Key: key,
+    }),
+    { expiresIn: 60 * 60 * 24 * 7 }
+  );
+
+  return { key, url: signedUrl };
+}
 
 function getStorageConfig(): StorageConfig {
   const baseUrl = ENV.forgeApiUrl;
@@ -11,7 +91,7 @@ function getStorageConfig(): StorageConfig {
 
   if (!baseUrl || !apiKey) {
     throw new Error(
-      "Storage proxy credentials missing: set BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY"
+      "Storage credentials missing: configure Cloudflare R2 or set BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY"
     );
   }
 
@@ -41,14 +121,6 @@ async function buildDownloadUrl(
   return (await response.json()).url;
 }
 
-function ensureTrailingSlash(value: string): string {
-  return value.endsWith("/") ? value : `${value}/`;
-}
-
-function normalizeKey(relKey: string): string {
-  return relKey.replace(/^\/+/, "");
-}
-
 function toFormData(
   data: Buffer | Uint8Array | string,
   contentType: string,
@@ -67,7 +139,7 @@ function buildAuthHeaders(apiKey: string): HeadersInit {
   return { Authorization: `Bearer ${apiKey}` };
 }
 
-export async function storagePut(
+async function storagePutForge(
   relKey: string,
   data: Buffer | Uint8Array | string,
   contentType = "application/octet-stream"
@@ -92,9 +164,32 @@ export async function storagePut(
   return { key, url };
 }
 
-export async function storageGet(relKey: string): Promise<{ key: string; url: string; }> {
-  const { baseUrl, apiKey } = getStorageConfig();
+export async function storagePut(
+  relKey: string,
+  data: Buffer | Uint8Array | string,
+  contentType = "application/octet-stream"
+): Promise<{ key: string; url: string }> {
+  if (hasR2Config()) {
+    return storagePutR2(relKey, data, contentType);
+  }
+
+  return storagePutForge(relKey, data, contentType);
+}
+
+export async function storageGet(
+  relKey: string
+): Promise<{ key: string; url: string }> {
   const key = normalizeKey(relKey);
+
+  if (hasR2Config()) {
+    const publicUrl = getPublicR2Url(key);
+    if (!publicUrl) {
+      throw new Error("R2_PUBLIC_URL is required to read files from Cloudflare R2");
+    }
+    return { key, url: publicUrl };
+  }
+
+  const { baseUrl, apiKey } = getStorageConfig();
   return {
     key,
     url: await buildDownloadUrl(baseUrl, key, apiKey),

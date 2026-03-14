@@ -12,6 +12,12 @@
 - `DATABASE_URL`
 - `JWT_SECRET`
 - `APP_ID` (`norte-vivo-local` works)
+- `R2_ACCOUNT_ID`
+- `R2_ACCESS_KEY_ID`
+- `R2_SECRET_ACCESS_KEY`
+- `R2_BUCKET`
+- `R2_PUBLIC_URL`
+- `R2_ENDPOINT` (optional)
 - `BUILT_IN_FORGE_API_URL`
 - `BUILT_IN_FORGE_API_KEY`
 - `FRONTEND_URL`
@@ -68,3 +74,11 @@ GET /api/health
 4. Run `pnpm db:seed`.
 5. Deploy Vercel frontend.
 6. Test signup/login, search, category, listing details and new listing flows.
+
+## Cloudflare R2
+
+1. Create an R2 bucket.
+2. Create an API token/key pair with object read/write access for that bucket.
+3. Add the R2 variables to Railway.
+4. Set `R2_PUBLIC_URL` to a public bucket domain, custom domain, or `r2.dev` URL.
+5. Redeploy Railway and test image upload from the advertiser panel.
