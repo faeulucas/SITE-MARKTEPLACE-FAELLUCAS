@@ -160,6 +160,8 @@ export const mockUsers = [
     phone: null,
     whatsapp: "43999990001",
     avatar: null,
+    bannerUrl:
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=80",
     bio: null,
     personType: "pj",
     cpfCnpj: null,
@@ -186,6 +188,8 @@ export const mockUsers = [
     phone: null,
     whatsapp: "43999990002",
     avatar: null,
+    bannerUrl:
+      "https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&w=1400&q=80",
     bio: null,
     personType: "pj",
     cpfCnpj: null,
@@ -362,6 +366,29 @@ export const mockListingImages = [
   },
 ];
 
+export function attachMockSellerPreviewToListings<T extends { userId: number }>(
+  items: T[]
+) {
+  return items.map(item => {
+    const seller = mockUsers.find(user => user.id === item.userId) ?? null;
+
+    return {
+      ...item,
+      seller: seller
+        ? {
+            id: seller.id,
+            name: seller.name,
+            personType: seller.personType,
+            companyName: seller.companyName,
+            avatar: seller.avatar,
+            bannerUrl: seller.bannerUrl,
+            isVerified: seller.isVerified,
+          }
+        : null,
+    };
+  });
+}
+
 export function getMockSellerProfile(sellerId: number) {
   const seller = mockUsers.find(user => user.id === sellerId) ?? null;
   if (!seller) return null;
@@ -380,6 +407,7 @@ export function getMockSellerProfile(sellerId: number) {
       personType: seller.personType,
       companyName: seller.companyName,
       avatar: seller.avatar,
+      bannerUrl: seller.bannerUrl,
       whatsapp: seller.whatsapp,
       bio: seller.bio,
       isVerified: seller.isVerified,
@@ -407,7 +435,10 @@ export function getMockListingById(id: number) {
       ? {
           id: seller.id,
           name: seller.name,
+          personType: seller.personType,
+          companyName: seller.companyName,
           avatar: seller.avatar,
+          bannerUrl: seller.bannerUrl,
           whatsapp: seller.whatsapp,
           isVerified: seller.isVerified,
           createdAt: seller.createdAt,

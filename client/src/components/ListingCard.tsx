@@ -16,7 +16,10 @@ interface ListingCardProps {
   viewCount?: number | null;
   createdAt: Date | string;
   images?: { url: string; isPrimary?: boolean | null }[];
-  seller?: { name?: string | null; isVerified?: boolean | null | undefined };
+  seller?: {
+    name?: string | null;
+    isVerified?: boolean | null | undefined;
+  } | null;
   categoryName?: string;
   type?: string | null;
   onFavorite?: (id: number) => void;
@@ -34,22 +37,44 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export default function ListingCard({
-  id, title, price, priceType, cityId, subcategory, neighborhood, isBoosted, isFeatured,
-  viewCount, createdAt, images, seller, categoryName, type, onFavorite, isFavorited, cityName
+  id,
+  title,
+  price,
+  priceType,
+  cityId,
+  subcategory,
+  neighborhood,
+  isBoosted,
+  isFeatured,
+  viewCount,
+  createdAt,
+  images,
+  seller,
+  categoryName,
+  type,
+  onFavorite,
+  isFavorited,
+  cityName,
 }: ListingCardProps) {
   const primaryImage = images?.find(i => i.isPrimary) || images?.[0];
 
   const formatPrice = () => {
     if (!price || priceType === "free") return "Grátis";
     if (priceType === "on_request") return "Sob consulta";
-    if (priceType === "negotiable") return `R$ ${Number(price).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} (negociável)`;
+    if (priceType === "negotiable")
+      return `R$ ${Number(price).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} (negociável)`;
     return `R$ ${Number(price).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
   };
 
-  const timeAgo = formatDistanceToNow(new Date(createdAt), { addSuffix: true, locale: ptBR });
+  const timeAgo = formatDistanceToNow(new Date(createdAt), {
+    addSuffix: true,
+    locale: ptBR,
+  });
 
   return (
-    <div className={`listing-card group relative ${isBoosted ? "boost-pulse ring-2 ring-amber-400" : ""}`}>
+    <div
+      className={`listing-card group relative ${isBoosted ? "boost-pulse ring-2 ring-amber-400" : ""}`}
+    >
       {/* Badges */}
       <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
         {isBoosted && (
@@ -66,10 +91,15 @@ export default function ListingCard({
 
       {/* Favorite button */}
       <button
-        onClick={(e) => { e.preventDefault(); onFavorite?.(id); }}
+        onClick={e => {
+          e.preventDefault();
+          onFavorite?.(id);
+        }}
         className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-white/90 shadow-md flex items-center justify-center hover:scale-110 transition-transform"
       >
-        <Heart className={`w-4 h-4 ${isFavorited ? "fill-red-500 text-red-500" : "text-gray-400"}`} />
+        <Heart
+          className={`w-4 h-4 ${isFavorited ? "fill-red-500 text-red-500" : "text-gray-400"}`}
+        />
       </button>
 
       <Link href={`/anuncio/${id}`}>
@@ -105,7 +135,10 @@ export default function ListingCard({
           </h3>
 
           {/* Price */}
-          <p className="text-base font-bold mt-1" style={{ color: "oklch(0.48 0.22 255)" }}>
+          <p
+            className="text-base font-bold mt-1"
+            style={{ color: "oklch(0.48 0.22 255)" }}
+          >
             {formatPrice()}
           </p>
 
@@ -127,8 +160,12 @@ export default function ListingCard({
               <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold">
                 {seller.name?.charAt(0)?.toUpperCase() || "?"}
               </div>
-              <span className="text-xs text-gray-600 truncate">{seller.name || "Anunciante"}</span>
-              {seller.isVerified && <BadgeCheck className="w-3.5 h-3.5 text-blue-500 shrink-0" />}
+              <span className="text-xs text-gray-600 truncate">
+                {seller.name || "Anunciante"}
+              </span>
+              {seller.isVerified && (
+                <BadgeCheck className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+              )}
               {viewCount !== undefined && (
                 <div className="ml-auto flex items-center gap-0.5 text-gray-400">
                   <Eye className="w-3 h-3" />

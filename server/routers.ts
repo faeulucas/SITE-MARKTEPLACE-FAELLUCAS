@@ -28,6 +28,7 @@ import { eq, desc, and, like, gte, lte, or, sql, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import {
+  attachMockSellerPreviewToListings,
   getMockListingById,
   mockCategories,
   mockCities,
@@ -68,6 +69,34 @@ async function attachImagesToListings<T extends { id: number }>(
   return items.map(item => ({
     ...item,
     images: imagesByListingId.get(item.id) ?? [],
+  }));
+}
+
+async function attachSellerPreviewToListings<T extends { userId: number }>(
+  db: NonNullable<Awaited<ReturnType<typeof getDb>>>,
+  items: T[]
+) {
+  if (items.length === 0) return items.map(item => ({ ...item, seller: null }));
+
+  const userIds = Array.from(new Set(items.map(item => item.userId)));
+  const sellerRows = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      personType: users.personType,
+      companyName: users.companyName,
+      avatar: users.avatar,
+      bannerUrl: users.bannerUrl,
+      isVerified: users.isVerified,
+    })
+    .from(users)
+    .where(inArray(users.id, userIds));
+
+  const sellersById = new Map(sellerRows.map(item => [item.id, item]));
+
+  return items.map(item => ({
+    ...item,
+    seller: sellersById.get(item.userId) ?? null,
   }));
 }
 
@@ -395,6 +424,7 @@ export const appRouter = router({
           phone: z.string().optional(),
           whatsapp: z.string().optional(),
           bio: z.string().optional(),
+          bannerUrl: z.string().optional(),
           personType: z.enum(["pf", "pj"]).optional(),
           cpfCnpj: z.string().optional(),
           companyName: z.string().optional(),
@@ -440,6 +470,41 @@ export const appRouter = router({
           .update(users)
           .set({
             avatar: url,
+            updatedAt: new Date(),
+          })
+          .where(eq(users.id, ctx.user.id));
+
+        return { success: true as const, url };
+      }),
+    uploadBanner: protectedProcedure
+      .input(
+        z.object({
+          base64: z.string(),
+          mimeType: z.string().default("image/jpeg"),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+        const { storagePut } = await import("./storage");
+        const buffer = Buffer.from(
+          input.base64.replace(/^data:[^;]+;base64,/, ""),
+          "base64"
+        );
+        const extension =
+          input.mimeType === "image/png"
+            ? "png"
+            : input.mimeType === "image/webp"
+              ? "webp"
+              : "jpg";
+        const key = `banners/${ctx.user.id}/storefront-${Date.now()}.${extension}`;
+        const { url } = await storagePut(key, buffer, input.mimeType);
+
+        await db
+          .update(users)
+          .set({
+            bannerUrl: url,
             updatedAt: new Date(),
           })
           .where(eq(users.id, ctx.user.id));
@@ -532,11 +597,13 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) {
-          return mockListings
-            .filter(item => item.status === "active" && item.isBoosted)
-            .filter(item => !input.cityId || item.cityId === input.cityId)
-            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-            .slice(0, input.limit);
+          return attachMockSellerPreviewToListings(
+            mockListings
+              .filter(item => item.status === "active" && item.isBoosted)
+              .filter(item => !input.cityId || item.cityId === input.cityId)
+              .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+              .slice(0, input.limit)
+          );
         }
         const conditions = [
           eq(listings.status, "active"),
@@ -549,7 +616,8 @@ export const appRouter = router({
           .where(and(...conditions))
           .orderBy(desc(listings.createdAt))
           .limit(input.limit);
-        return attachImagesToListings(db, items);
+        const itemsWithImages = await attachImagesToListings(db, items);
+        return attachSellerPreviewToListings(db, itemsWithImages);
       }),
     recentListings: publicProcedure
       .input(
@@ -562,14 +630,17 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) {
-          return mockListings
-            .filter(item => item.status === "active")
-            .filter(item => !input.cityId || item.cityId === input.cityId)
-            .filter(
-              item => !input.categoryId || item.categoryId === input.categoryId
-            )
-            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-            .slice(0, input.limit);
+          return attachMockSellerPreviewToListings(
+            mockListings
+              .filter(item => item.status === "active")
+              .filter(item => !input.cityId || item.cityId === input.cityId)
+              .filter(
+                item =>
+                  !input.categoryId || item.categoryId === input.categoryId
+              )
+              .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+              .slice(0, input.limit)
+          );
         }
         const conditions: ReturnType<typeof eq>[] = [
           eq(listings.status, "active"),
@@ -583,7 +654,8 @@ export const appRouter = router({
           .where(and(...conditions))
           .orderBy(desc(listings.createdAt))
           .limit(input.limit);
-        return attachImagesToListings(db, items);
+        const itemsWithImages = await attachImagesToListings(db, items);
+        return attachSellerPreviewToListings(db, itemsWithImages);
       }),
     searchListings: publicProcedure
       .input(
@@ -683,6 +755,7 @@ export const appRouter = router({
             personType: users.personType,
             companyName: users.companyName,
             avatar: users.avatar,
+            bannerUrl: users.bannerUrl,
             whatsapp: users.whatsapp,
             isVerified: users.isVerified,
             createdAt: users.createdAt,
@@ -711,6 +784,7 @@ export const appRouter = router({
             personType: users.personType,
             companyName: users.companyName,
             avatar: users.avatar,
+            bannerUrl: users.bannerUrl,
             whatsapp: users.whatsapp,
             bio: users.bio,
             isVerified: users.isVerified,
@@ -1083,16 +1157,14 @@ export const appRouter = router({
         const startsAt = new Date();
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + input.durationDays);
-        await db
-          .insert(boosters)
-          .values({
-            ...input,
-            userId: ctx.user.id,
-            price: String(price),
-            status: "active",
-            startsAt,
-            expiresAt,
-          });
+        await db.insert(boosters).values({
+          ...input,
+          userId: ctx.user.id,
+          price: String(price),
+          status: "active",
+          startsAt,
+          expiresAt,
+        });
         await db
           .update(listings)
           .set({ isBoosted: true, boostExpiresAt: expiresAt })

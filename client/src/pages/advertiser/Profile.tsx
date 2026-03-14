@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -26,7 +27,9 @@ export default function AdvertiserProfile() {
   const [whatsapp, setWhatsapp] = useState("");
   const [cityId, setCityId] = useState<string>("none");
   const [neighborhood, setNeighborhood] = useState("");
+  const [bio, setBio] = useState("");
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [bannerUploading, setBannerUploading] = useState(false);
   const utils = trpc.useUtils();
   const { data: cities } = trpc.public.cities.useQuery();
 
@@ -39,6 +42,7 @@ export default function AdvertiserProfile() {
     setWhatsapp(user.whatsapp ?? "");
     setCityId(user.cityId ? String(user.cityId) : "none");
     setNeighborhood(user.neighborhood ?? "");
+    setBio(user.bio ?? "");
   }, [user]);
 
   const updateProfileMutation = trpc.auth.updateProfile.useMutation({
@@ -61,6 +65,16 @@ export default function AdvertiserProfile() {
     },
   });
 
+  const uploadBannerMutation = trpc.auth.uploadBanner.useMutation({
+    onSuccess: async () => {
+      await utils.auth.me.invalidate();
+      toast.success("Banner da loja atualizado.");
+    },
+    onError: error => {
+      toast.error(error.message);
+    },
+  });
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
@@ -77,8 +91,12 @@ export default function AdvertiserProfile() {
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-blue-100">
             <LogIn className="h-10 w-10 text-blue-600" />
           </div>
-          <h2 className="font-display text-2xl font-bold text-gray-800">Acesse seus dados</h2>
-          <p className="mt-3 text-gray-500">Entre para visualizar e editar suas informacoes.</p>
+          <h2 className="font-display text-2xl font-bold text-gray-800">
+            Acesse seus dados
+          </h2>
+          <p className="mt-3 text-gray-500">
+            Entre para visualizar e editar suas informacoes.
+          </p>
           <Link href={LOGIN_ROUTE}>
             <Button className="mt-6 rounded-xl bg-brand-gradient px-8 py-3 text-white">
               Entrar / Cadastrar
@@ -91,7 +109,9 @@ export default function AdvertiserProfile() {
   }
 
   const displayName =
-    personType === "pj" ? companyName || user?.companyName || user?.name : profileName || user?.name;
+    personType === "pj"
+      ? companyName || user?.companyName || user?.name
+      : profileName || user?.name;
   const displayInitial = displayName?.charAt(0)?.toUpperCase() || "U";
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,11 +136,36 @@ export default function AdvertiserProfile() {
     reader.readAsDataURL(file);
   };
 
+  const handleBannerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async readerEvent => {
+      const result = readerEvent.target?.result;
+      if (typeof result !== "string") return;
+
+      setBannerUploading(true);
+      try {
+        await uploadBannerMutation.mutateAsync({
+          base64: result,
+          mimeType: file.type || "image/jpeg",
+        });
+      } finally {
+        setBannerUploading(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <main className="container max-w-4xl py-4 sm:py-6">
-        <Link href="/anunciante" className="mb-6 flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 transition-colors">
+        <Link
+          href="/anunciante"
+          className="mb-6 flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 transition-colors"
+        >
           <ArrowLeft className="h-4 w-4" />
           Voltar ao painel
         </Link>
@@ -132,9 +177,12 @@ export default function AdvertiserProfile() {
                 <Store className="h-6 w-6" />
               </div>
               <div>
-                <h1 className="font-display text-2xl font-bold text-gray-900">Meus dados</h1>
+                <h1 className="font-display text-2xl font-bold text-gray-900">
+                  Meus dados
+                </h1>
                 <p className="text-sm text-gray-500">
-                  Gerencie foto, tipo de conta e informacoes publicas do seu perfil.
+                  Gerencie foto, tipo de conta e informacoes publicas do seu
+                  perfil.
                 </p>
               </div>
             </div>
@@ -146,7 +194,11 @@ export default function AdvertiserProfile() {
           <div className="mb-6 flex flex-col gap-4 rounded-[24px] bg-gray-50 p-4 sm:flex-row sm:items-center sm:p-5">
             <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-3xl bg-brand-gradient text-3xl font-black text-white">
               {user?.avatar ? (
-                <img src={user.avatar} alt={displayName || "Perfil"} className="h-full w-full object-cover" />
+                <img
+                  src={user.avatar}
+                  alt={displayName || "Perfil"}
+                  className="h-full w-full object-cover"
+                />
               ) : (
                 displayInitial
               )}
@@ -154,10 +206,12 @@ export default function AdvertiserProfile() {
             <div className="flex-1">
               <p className="font-semibold text-gray-900">Foto de perfil</p>
               <p className="mt-1 text-sm text-gray-500">
-                Essa imagem aparece no painel, no menu da conta e na apresentacao do anunciante.
+                Essa imagem aparece no painel, no menu da conta e na
+                apresentacao do anunciante.
               </p>
               <p className="mt-1 text-xs text-gray-400">
-                Ao tocar no botao abaixo, voce escolhe uma imagem da galeria ou biblioteca do aparelho.
+                Ao tocar no botao abaixo, voce escolhe uma imagem da galeria ou
+                biblioteca do aparelho.
               </p>
             </div>
             <label className="w-full cursor-pointer sm:w-auto">
@@ -174,9 +228,54 @@ export default function AdvertiserProfile() {
                 disabled={avatarUploading || uploadAvatarMutation.isPending}
               >
                 <Camera className="mr-2 h-4 w-4" />
-                {avatarUploading || uploadAvatarMutation.isPending ? "Enviando..." : "Escolher foto"}
+                {avatarUploading || uploadAvatarMutation.isPending
+                  ? "Enviando..."
+                  : "Escolher foto"}
               </Button>
             </label>
+          </div>
+
+          <div className="mb-6 overflow-hidden rounded-[24px] border border-gray-100 bg-white">
+            <div className="relative h-44 bg-gray-100 sm:h-52">
+              {user?.bannerUrl ? (
+                <img
+                  src={user.bannerUrl}
+                  alt={displayName || "Banner da loja"}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="h-full w-full bg-hero-gradient" />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-slate-900/10 to-transparent" />
+            </div>
+            <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+              <div>
+                <p className="font-semibold text-gray-900">Banner da vitrine</p>
+                <p className="mt-1 text-sm text-gray-500">
+                  Use foto da fachada, interior da loja ou uma arte da marca.
+                  Esse banner aparece no topo da sua vitrine publica.
+                </p>
+              </div>
+              <label className="w-full cursor-pointer sm:w-auto">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleBannerChange}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full rounded-2xl sm:w-auto"
+                  disabled={bannerUploading || uploadBannerMutation.isPending}
+                >
+                  <Camera className="mr-2 h-4 w-4" />
+                  {bannerUploading || uploadBannerMutation.isPending
+                    ? "Enviando..."
+                    : "Escolher banner"}
+                </Button>
+              </label>
+            </div>
           </div>
 
           <form
@@ -186,9 +285,11 @@ export default function AdvertiserProfile() {
               updateProfileMutation.mutate({
                 name: profileName || undefined,
                 personType,
-                companyName: personType === "pj" ? companyName || undefined : undefined,
+                companyName:
+                  personType === "pj" ? companyName || undefined : undefined,
                 cpfCnpj: cpfCnpj || undefined,
                 whatsapp: whatsapp || undefined,
+                bio: bio || undefined,
                 cityId: cityId !== "none" ? Number(cityId) : undefined,
                 neighborhood: neighborhood || undefined,
               });
@@ -256,7 +357,11 @@ export default function AdvertiserProfile() {
                 <Input
                   value={cpfCnpj}
                   onChange={event => setCpfCnpj(event.target.value)}
-                  placeholder={personType === "pj" ? "00.000.000/0000-00" : "000.000.000-00"}
+                  placeholder={
+                    personType === "pj"
+                      ? "00.000.000/0000-00"
+                      : "000.000.000-00"
+                  }
                 />
               </div>
               <div>
@@ -287,6 +392,18 @@ export default function AdvertiserProfile() {
                 value={neighborhood}
                 onChange={event => setNeighborhood(event.target.value)}
                 placeholder="Centro, Vila Nova..."
+              />
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                Descricao da loja
+              </label>
+              <Textarea
+                value={bio}
+                onChange={event => setBio(event.target.value)}
+                placeholder="Conte o que sua loja faz, o que vende e por que as pessoas devem comprar de voce."
+                className="min-h-28 rounded-xl"
               />
             </div>
 

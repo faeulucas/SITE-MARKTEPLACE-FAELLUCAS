@@ -99,7 +99,12 @@ type HomeHighlightListing = {
   subcategory?: string | null;
   whatsapp?: string | null;
   images?: { url: string; isPrimary?: boolean | null }[];
-  seller?: { id?: number; name?: string | null } | null;
+  seller?: {
+    id?: number;
+    name?: string | null;
+    avatar?: string | null;
+    bannerUrl?: string | null;
+  } | null;
 };
 
 export default function Home() {
@@ -273,7 +278,9 @@ export default function Home() {
           <div className="grid gap-4 md:grid-cols-3">
             {companyHighlights.map(item => {
               const cover =
-                item.images?.find(image => image.isPrimary) ?? item.images?.[0];
+                (item.seller?.bannerUrl ||
+                  item.images?.find(image => image.isPrimary)?.url) ??
+                item.images?.[0]?.url;
               const displayName = item.seller?.name?.trim() || item.title;
               const subtitle =
                 categories?.find(category => category.id === item.categoryId)
@@ -296,7 +303,7 @@ export default function Home() {
                     <div className="relative h-36 overflow-hidden bg-gray-100">
                       {cover ? (
                         <img
-                          src={cover.url}
+                          src={cover}
                           alt={displayName}
                           className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
                         />
@@ -312,8 +319,16 @@ export default function Home() {
 
                   <div className="relative px-5 pb-5">
                     <div className="-mt-7 flex justify-center">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border-4 border-white bg-white text-lg font-black text-blue-700 shadow-md">
-                        {displayName.charAt(0).toUpperCase()}
+                      <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border-4 border-white bg-white text-lg font-black text-blue-700 shadow-md">
+                        {item.seller?.avatar ? (
+                          <img
+                            src={item.seller.avatar}
+                            alt={displayName}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          displayName.charAt(0).toUpperCase()
+                        )}
                       </div>
                     </div>
 
