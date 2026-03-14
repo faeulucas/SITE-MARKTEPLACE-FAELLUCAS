@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ListingCard from "@/components/ListingCard";
 import { Button } from "@/components/ui/button";
+import { CASHBACK_RULES } from "@/lib/cashback";
 import {
   Carousel,
   CarouselApi,
@@ -254,6 +255,32 @@ export default function Home() {
               </Link>
             </div>
           )}
+        </div>
+      </section>
+
+      <section className="container py-12">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h2 className="section-heading">Cashback em Categorias Selecionadas</h2>
+            <p className="text-sm text-gray-500">
+              Programa de fidelizacao pensado para categorias com compra recorrente.
+            </p>
+          </div>
+          <Link href="/como-funciona" className="text-sm font-medium text-emerald-600 hover:underline">
+            Como funciona
+          </Link>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {CASHBACK_RULES.slice(0, 4).map(rule => (
+            <article key={rule.slug} className="rounded-[24px] border border-emerald-100 bg-emerald-50 p-5 shadow-sm">
+              <div className="mb-3 inline-flex rounded-full bg-white px-3 py-1 text-xs font-black text-emerald-700">
+                ate {rule.rate}% de cashback
+              </div>
+              <h3 className="font-display text-xl font-bold text-gray-900">{rule.label}</h3>
+              <p className="mt-2 text-sm text-gray-600">{rule.description}</p>
+            </article>
+          ))}
         </div>
       </section>
 

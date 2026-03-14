@@ -6,6 +6,15 @@ import { trpc } from "@/lib/trpc";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { CASHBACK_RULES } from "@/lib/cashback";
 import { toast } from "sonner";
 import {
   AlertCircle,
@@ -17,15 +26,18 @@ import {
   LayoutDashboard,
   LogIn,
   MessageSquare,
+  Store,
   Package,
   Pause,
   Play,
   Plus,
+  Save,
   Star,
   Trash2,
   Trophy,
   Zap,
 } from "lucide-react";
+import { useEffect } from "react";
 
 const STATUS_CONFIG: Record<string, { label: string; badge: string }> = {
   active: { label: "Ativo", badge: "bg-emerald-50 text-emerald-700" },
@@ -39,10 +51,29 @@ const STATUS_CONFIG: Record<string, { label: string; badge: string }> = {
 export default function AdvertiserDashboard() {
   const { user, isAuthenticated, loading } = useAuth();
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [profileName, setProfileName] = useState("");
+  const [personType, setPersonType] = useState<"pf" | "pj">("pf");
+  const [companyName, setCompanyName] = useState("");
+  const [cpfCnpj, setCpfCnpj] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [cityId, setCityId] = useState<string>("none");
+  const [neighborhood, setNeighborhood] = useState("");
   const utils = trpc.useUtils();
   const { data: stats } = trpc.advertiser.stats.useQuery(undefined, {
     enabled: isAuthenticated,
   });
+  const { data: cities } = trpc.public.cities.useQuery();
+
+  useEffect(() => {
+    if (!user) return;
+    setProfileName(user.name ?? "");
+    setPersonType((user.personType as "pf" | "pj") ?? "pf");
+    setCompanyName(user.companyName ?? "");
+    setCpfCnpj(user.cpfCnpj ?? "");
+    setWhatsapp(user.whatsapp ?? "");
+    setCityId(user.cityId ? String(user.cityId) : "none");
+    setNeighborhood(user.neighborhood ?? "");
+  }, [user]);
 
   const updateMutation = trpc.advertiser.updateListing.useMutation({
     onSuccess: async () => {
@@ -63,6 +94,16 @@ export default function AdvertiserDashboard() {
     onSuccess: async () => {
       await utils.advertiser.stats.invalidate();
       toast.success("Booster ativado.");
+    },
+  });
+
+  const updateProfileMutation = trpc.auth.updateProfile.useMutation({
+    onSuccess: async () => {
+      await utils.auth.me.invalidate();
+      toast.success("Perfil atualizado.");
+    },
+    onError: error => {
+      toast.error(error.message);
     },
   });
 
@@ -97,6 +138,7 @@ export default function AdvertiserDashboard() {
 
   const listings = stats?.listings ?? [];
   const topListing = stats?.topListing ?? null;
+  const cashbackHighlights = CASHBACK_RULES.slice(0, 4);
   const trialDaysLeft = user?.trialStartedAt
     ? Math.max(0, 30 - Math.floor((Date.now() - new Date(user.trialStartedAt).getTime()) / 86400000))
     : 30;
@@ -297,6 +339,198 @@ export default function AdvertiserDashboard() {
           </div>
 
           <div className="space-y-6">
+            <section className="rounded-[28px] border border-gray-100 bg-white p-6 shadow-sm">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+                  <Store className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="font-display text-xl font-bold text-gray-900">
+                    Perfil da conta
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    Defina se sua conta opera como pessoa fisica ou juridica.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mb-4 grid gap-3 rounded-[22px] bg-gray-50 p-4 text-sm text-gray-600">
+                <div className="flex items-center justify-between">
+                  <span>Tipo atual</span>
+                  <span className="rounded-full bg-white px-3 py-1 font-semibold text-gray-900">
+                    {personType === "pj" ? "Pessoa juridica" : "Pessoa fisica"}
+                  </span>
+                </div>
+                <p>
+                  Os valores continuam os mesmos por enquanto, mas a comunicacao,
+                  beneficios e recursos podem variar por perfil em breve.
+                </p>
+              </div>
+
+              <form
+                className="space-y-4"
+                onSubmit={event => {
+                  event.preventDefault();
+                  updateProfileMutation.mutate({
+                    name: profileName || undefined,
+                    personType,
+                    companyName: personType === "pj" ? companyName || undefined : undefined,
+                    cpfCnpj: cpfCnpj || undefined,
+                    whatsapp: whatsapp || undefined,
+                    cityId: cityId !== "none" ? Number(cityId) : undefined,
+                    neighborhood: neighborhood || undefined,
+                  });
+                }}
+              >
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      Tipo de conta
+                    </label>
+                    <Select
+                      value={personType}
+                      onValueChange={value => setPersonType(value as "pf" | "pj")}
+                    >
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pf">Pessoa fisica</SelectItem>
+                        <SelectItem value="pj">Pessoa juridica</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      WhatsApp
+                    </label>
+                    <Input
+                      value={whatsapp}
+                      onChange={event => setWhatsapp(event.target.value)}
+                      placeholder="(43) 99999-9999"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                    {personType === "pj" ? "Nome do responsavel" : "Nome"}
+                  </label>
+                  <Input
+                    value={profileName}
+                    onChange={event => setProfileName(event.target.value)}
+                    placeholder="Seu nome"
+                  />
+                </div>
+
+                {personType === "pj" && (
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      Empresa
+                    </label>
+                    <Input
+                      value={companyName}
+                      onChange={event => setCompanyName(event.target.value)}
+                      placeholder="Nome fantasia ou razao social"
+                    />
+                  </div>
+                )}
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      {personType === "pj" ? "CNPJ" : "CPF"}
+                    </label>
+                    <Input
+                      value={cpfCnpj}
+                      onChange={event => setCpfCnpj(event.target.value)}
+                      placeholder={personType === "pj" ? "00.000.000/0000-00" : "000.000.000-00"}
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      Cidade
+                    </label>
+                    <Select value={cityId} onValueChange={setCityId}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Nao informar</SelectItem>
+                        {cities?.map(city => (
+                          <SelectItem key={city.id} value={String(city.id)}>
+                            {city.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                    Bairro
+                  </label>
+                  <Input
+                    value={neighborhood}
+                    onChange={event => setNeighborhood(event.target.value)}
+                    placeholder="Centro, Vila Nova..."
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={updateProfileMutation.isPending}
+                  className="w-full rounded-2xl bg-brand-gradient font-bold text-white hover:opacity-90"
+                >
+                  <Save className="mr-2 h-4 w-4" />
+                  {updateProfileMutation.isPending ? "Salvando..." : "Salvar perfil"}
+                </Button>
+              </form>
+            </section>
+
+            <section className="rounded-[28px] border border-gray-100 bg-white p-6 shadow-sm">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+                  <Trophy className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="font-display text-xl font-bold text-gray-900">
+                    Cashback Norte Vivo
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    Recompensa pensada para categorias com recompra frequente.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {cashbackHighlights.map(rule => (
+                  <div
+                    key={rule.slug}
+                    className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <div className="text-sm font-semibold text-gray-900">
+                          {rule.label}
+                        </div>
+                        <div className="text-xs text-gray-600">{rule.description}</div>
+                      </div>
+                      <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-emerald-700">
+                        ate {rule.rate}% de cashback
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <p className="mt-4 text-xs text-gray-500">
+                Para comecar, o cashback vale melhor em categorias recorrentes,
+                como alimentacao, delivery, pet, saude e beleza.
+              </p>
+            </section>
+
             <section className="rounded-[28px] border border-gray-100 bg-white p-6 shadow-sm">
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">

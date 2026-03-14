@@ -58,6 +58,10 @@ export const appRouter = router({
       name: z.string().min(2).max(120),
       email: z.string().email(),
       password: z.string().min(6).max(100),
+      personType: z.enum(["pf", "pj"]).default("pf"),
+      whatsapp: z.string().optional(),
+      cpfCnpj: z.string().optional(),
+      companyName: z.string().optional(),
     })).mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
@@ -80,6 +84,10 @@ export const appRouter = router({
         passwordHash: hashPassword(input.password),
         loginMethod: "local",
         role: "advertiser",
+        personType: input.personType,
+        whatsapp: input.whatsapp?.trim() || null,
+        cpfCnpj: input.cpfCnpj?.trim() || null,
+        companyName: input.personType === "pj" ? input.companyName?.trim() || null : null,
         trialStartedAt,
         trialUsed: false,
         lastSignedIn: now,
@@ -214,6 +222,7 @@ export const appRouter = router({
       whatsapp: z.string().optional(),
       bio: z.string().optional(),
       personType: z.enum(["pf", "pj"]).optional(),
+      cpfCnpj: z.string().optional(),
       companyName: z.string().optional(),
       cityId: z.number().optional(),
       neighborhood: z.string().optional(),

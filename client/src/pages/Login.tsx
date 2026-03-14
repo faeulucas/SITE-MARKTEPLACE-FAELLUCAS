@@ -4,6 +4,13 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { CheckCircle, LogIn, Shield, UserPlus, Zap } from "lucide-react";
 
@@ -22,6 +29,10 @@ export default function LoginPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [personType, setPersonType] = useState<"pf" | "pj">("pf");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [cpfCnpj, setCpfCnpj] = useState("");
+  const [companyName, setCompanyName] = useState("");
   const [resetEmail, setResetEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [resetMessage, setResetMessage] = useState("");
@@ -66,6 +77,10 @@ export default function LoginPage() {
         name,
         email,
         password,
+        personType,
+        whatsapp: whatsapp || undefined,
+        cpfCnpj: cpfCnpj || undefined,
+        companyName: personType === "pj" ? companyName || undefined : undefined,
       });
       return;
     }
@@ -141,15 +156,76 @@ export default function LoginPage() {
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
               {mode === "register" && (
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-gray-700">Nome</label>
-                  <Input
-                    value={name}
-                    onChange={event => setName(event.target.value)}
-                    placeholder="Seu nome completo"
-                    required
-                  />
-                </div>
+                <>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                        Tipo de cadastro
+                      </label>
+                      <Select
+                        value={personType}
+                        onValueChange={value => setPersonType(value as "pf" | "pj")}
+                      >
+                        <SelectTrigger className="rounded-xl">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pf">Pessoa fisica</SelectItem>
+                          <SelectItem value="pj">Pessoa juridica</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                        WhatsApp
+                      </label>
+                      <Input
+                        value={whatsapp}
+                        onChange={event => setWhatsapp(event.target.value)}
+                        placeholder="(43) 99999-9999"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      {personType === "pj" ? "Nome da empresa" : "Nome"}
+                    </label>
+                    <Input
+                      value={name}
+                      onChange={event => setName(event.target.value)}
+                      placeholder={
+                        personType === "pj" ? "Nome do responsavel" : "Seu nome completo"
+                      }
+                      required
+                    />
+                  </div>
+
+                  {personType === "pj" && (
+                    <div>
+                      <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                        Empresa
+                      </label>
+                      <Input
+                        value={companyName}
+                        onChange={event => setCompanyName(event.target.value)}
+                        placeholder="Nome fantasia ou razao social"
+                        required
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      {personType === "pj" ? "CNPJ" : "CPF"}
+                    </label>
+                    <Input
+                      value={cpfCnpj}
+                      onChange={event => setCpfCnpj(event.target.value)}
+                      placeholder={personType === "pj" ? "00.000.000/0000-00" : "000.000.000-00"}
+                    />
+                  </div>
+                </>
               )}
 
               <div>

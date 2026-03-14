@@ -4,6 +4,7 @@ import { trpc } from "@/lib/trpc";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ListingCard from "@/components/ListingCard";
+import { getCashbackRuleBySlug } from "@/lib/cashback";
 import { ChevronRight, Tag } from "lucide-react";
 
 export default function CategoryPage() {
@@ -19,6 +20,7 @@ export default function CategoryPage() {
   });
 
   const category = categories?.find(c => c.slug === slug);
+  const cashbackRule = getCashbackRuleBySlug(slug);
 
   useEffect(() => {
     if (!slug) return;
@@ -41,6 +43,27 @@ export default function CategoryPage() {
           </div>
           <h1 className="font-display text-2xl font-bold text-gray-900">{category?.name || slug}</h1>
         </div>
+
+        {cashbackRule && (
+          <section className="mb-6 rounded-[24px] border border-emerald-100 bg-emerald-50 p-5">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-700">
+                  Cashback ativo nesta categoria
+                </p>
+                <h2 className="mt-2 font-display text-2xl font-bold text-gray-900">
+                  ate {cashbackRule.rate}% de volta para fidelizar clientes
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm text-gray-600">
+                  {cashbackRule.description}
+                </p>
+              </div>
+              <div className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-emerald-700">
+                Valido para compras recorrentes
+              </div>
+            </div>
+          </section>
+        )}
 
         {isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
