@@ -1,5 +1,5 @@
 import { trpc } from "@/lib/trpc";
-import { UNAUTHED_ERR_MSG } from '@shared/const';
+import { UNAUTHED_ERR_MSG } from "@shared/const";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createRoot } from "react-dom/client";
@@ -11,7 +11,10 @@ import "./index.css";
 const queryClient = new QueryClient();
 const apiBaseUrl = import.meta.env.PROD
   ? ""
-  : ((import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/+$/, "") ?? "");
+  : ((import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(
+      /\/+$/,
+      ""
+    ) ?? "");
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
@@ -57,9 +60,38 @@ const trpcClient = trpc.createClient({
 
 if ("serviceWorker" in navigator && import.meta.env.PROD) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(error => {
-      console.warn("[PWA] Service worker registration failed:", error);
+    let refreshing = false;
+
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
     });
+
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then(registration => {
+        registration.update().catch(error => {
+          console.warn("[PWA] Service worker update check failed:", error);
+        });
+
+        registration.addEventListener("updatefound", () => {
+          const newWorker = registration.installing;
+          if (!newWorker) return;
+
+          newWorker.addEventListener("statechange", () => {
+            if (
+              newWorker.state === "installed" &&
+              navigator.serviceWorker.controller
+            ) {
+              newWorker.postMessage({ type: "SKIP_WAITING" });
+            }
+          });
+        });
+      })
+      .catch(error => {
+        console.warn("[PWA] Service worker registration failed:", error);
+      });
   });
 }
 
