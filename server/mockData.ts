@@ -17,8 +17,8 @@ export const mockCategories = [
 
 export const mockPlans = [
   { id: 1, name: "Gratis", slug: "gratis", description: "Plano inicial para testar a plataforma", price: "0.00", durationDays: 30, maxListings: 5, maxImages: 3, canBoost: false, canFeatured: false, isActive: true, createdAt: new Date("2025-01-01") },
-  { id: 2, name: "Profissional", slug: "profissional", description: "Mais alcance para negocios locais", price: "12.90", durationDays: 30, maxListings: 15, maxImages: 8, canBoost: true, canFeatured: false, isActive: true, createdAt: new Date("2025-01-01") },
-  { id: 3, name: "Premium", slug: "premium", description: "Destaque maximo na plataforma", price: "19.90", durationDays: 30, maxListings: 9999, maxImages: 20, canBoost: true, canFeatured: true, isActive: true, createdAt: new Date("2025-01-01") },
+  { id: 2, name: "Profissional", slug: "profissional", description: "Mais alcance para negocios locais", price: "99.90", durationDays: 365, maxListings: 15, maxImages: 8, canBoost: true, canFeatured: false, isActive: true, createdAt: new Date("2025-01-01") },
+  { id: 3, name: "Premium", slug: "premium", description: "Destaque maximo na plataforma", price: "129.90", durationDays: 365, maxListings: 9999, maxImages: 20, canBoost: true, canFeatured: true, isActive: true, createdAt: new Date("2025-01-01") },
 ];
 
 export const mockUsers = [

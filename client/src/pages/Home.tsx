@@ -382,9 +382,9 @@ export default function Home() {
           <p className="text-gray-400 text-center mb-10">Comece grátis, cresça com o Norte Vivo</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
-              { name: "Grátis", price: "R$ 0", period: "30 dias", features: ["5 anúncios", "3 fotos por anúncio", "Suporte básico"], color: "border-gray-600", badge: null },
-              { name: "Profissional", price: "R$ 12,90", period: "/mês", features: ["15 anúncios", "8 fotos por anúncio", "Booster disponível", "Suporte prioritário"], color: "border-blue-500", badge: "POPULAR" },
-              { name: "Premium", price: "R$ 19,90", period: "/mês", features: ["Anúncios ilimitados", "20 fotos por anúncio", "Destaque na home", "Booster incluso", "Selo verificado"], color: "border-amber-400", badge: "MELHOR" },
+              { name: "Gratis", price: "R$ 0", period: "30 dias", features: ["5 anuncios", "3 fotos por anuncio", "Suporte basico"], color: "border-gray-600", badge: null },
+              { name: "Profissional", price: "R$ 99,90", period: "/ano", features: ["15 anuncios", "8 fotos por anuncio", "Booster disponivel", "Suporte prioritario"], color: "border-blue-500", badge: "LANCAMENTO" },
+              { name: "Premium", price: "R$ 129,90", period: "/ano", features: ["Anuncios ilimitados", "20 fotos por anuncio", "Destaque na home", "Booster incluso", "Selo verificado"], color: "border-amber-400", badge: "MELHOR" },
             ].map(plan => (
               <div key={plan.name} className={`bg-gray-800 rounded-2xl p-6 border-2 ${plan.color} relative`}>
                 {plan.badge && (

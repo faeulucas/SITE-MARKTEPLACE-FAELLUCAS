@@ -1,142 +1,297 @@
+import { useState } from "react";
 import { Link } from "wouter";
+import { CheckCircle, Zap, Star, Crown } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { LOGIN_ROUTE } from "@/const";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Zap, Star, Crown } from "lucide-react";
 
-const PLANS = [
+type BillingCycle = "monthly" | "yearly";
+
+type PlanVariant = {
+  price: number;
+  period: string;
+  note?: string;
+  savings?: string;
+};
+
+type PlanDefinition = {
+  id: string;
+  name: string;
+  icon: typeof Zap;
+  color: string;
+  btnClass: string;
+  badges: Partial<Record<BillingCycle, string>>;
+  description: string;
+  variants: Record<BillingCycle, PlanVariant>;
+  features: string[];
+  notIncluded: string[];
+};
+
+const PLANS: PlanDefinition[] = [
   {
     id: "gratis",
-    name: "Grátis",
-    price: 0,
-    period: "30 dias",
+    name: "Gratis",
     icon: Zap,
     color: "border-gray-200",
     btnClass: "bg-gray-100 text-gray-700 hover:bg-gray-200",
-    badge: null,
+    badges: {},
+    description: "Plano de entrada para anunciar e validar a plataforma.",
+    variants: {
+      monthly: { price: 0, period: "30 dias" },
+      yearly: { price: 0, period: "30 dias" },
+    },
     features: [
-      "5 anúncios ativos",
-      "3 fotos por anúncio",
+      "5 anuncios ativos",
+      "3 fotos por anuncio",
       "Validade de 30 dias",
-      "Busca padrão",
-      "Suporte básico",
+      "Busca padrao",
+      "Suporte basico",
     ],
     notIncluded: ["Booster de destaque", "Destaque na home", "Selo verificado"],
   },
   {
     id: "profissional",
     name: "Profissional",
-    price: 12.90,
-    period: "/mês",
     icon: Star,
     color: "border-blue-500 ring-2 ring-blue-100",
     btnClass: "bg-brand-gradient text-white hover:opacity-90",
-    badge: "MAIS POPULAR",
+    badges: {
+      monthly: "MAIS ACESSIVEL",
+      yearly: "PROMOCAO DE LANCAMENTO",
+    },
+    description: "Para quem quer manter anuncios ativos o ano inteiro sem pesar.",
+    variants: {
+      monthly: { price: 9.9, period: "/mes" },
+      yearly: {
+        price: 99.9,
+        period: "/ano",
+        note: "equivale a R$ 8,33/mes",
+        savings: "economize R$ 18,90",
+      },
+    },
     features: [
-      "15 anúncios ativos",
-      "8 fotos por anúncio",
-      "Validade de 30 dias",
-      "Booster disponível (R$ 19,90)",
+      "15 anuncios ativos",
+      "8 fotos por anuncio",
+      "Validade de 30 dias por anuncio",
+      "Booster disponivel",
       "Prioridade na busca",
-      "Suporte prioritário",
+      "Suporte prioritario",
     ],
     notIncluded: ["Destaque garantido na home", "Selo verificado"],
   },
   {
     id: "premium",
     name: "Premium",
-    price: 19.90,
-    period: "/mês",
     icon: Crown,
     color: "border-amber-400 ring-2 ring-amber-100",
     btnClass: "bg-orange-gradient text-white hover:opacity-90",
-    badge: "MELHOR CUSTO-BENEFÍCIO",
+    badges: {
+      monthly: "MELHOR CUSTO-BENEFICIO",
+      yearly: "MAIS VANTAJOSO",
+    },
+    description: "O plano para quem quer crescer rapido e aparecer mais.",
+    variants: {
+      monthly: { price: 14.9, period: "/mes" },
+      yearly: {
+        price: 129.9,
+        period: "/ano",
+        note: "equivale a R$ 10,83/mes",
+        savings: "economize R$ 48,90",
+      },
+    },
     features: [
-      "Anúncios ilimitados",
-      "20 fotos por anúncio",
-      "Validade de 30 dias",
-      "Booster incluso (1x/mês)",
+      "Anuncios ilimitados",
+      "20 fotos por anuncio",
+      "Validade de 30 dias por anuncio",
+      "Booster incluso",
       "Destaque garantido na home",
       "Selo de verificado",
       "Suporte VIP",
-      "Relatórios avançados",
+      "Relatorios avancados",
     ],
     notIncluded: [],
   },
 ];
 
 const BOOSTERS = [
-  { name: "Destaque Básico", price: 19.90, days: 7, desc: "Aparece no topo da categoria por 7 dias" },
-  { name: "Destaque Plus", price: 39.90, days: 15, desc: "Destaque na home + topo da categoria por 15 dias" },
-  { name: "Destaque Premium", price: 79.90, days: 30, desc: "Banner na home + destaque máximo por 30 dias" },
+  {
+    name: "Destaque Basico",
+    price: 12.9,
+    days: 7,
+    desc: "Aparece no topo da categoria por 7 dias",
+  },
+  {
+    name: "Destaque Plus",
+    price: 24.9,
+    days: 15,
+    desc: "Destaque na home + topo da categoria por 15 dias",
+  },
+  {
+    name: "Destaque Premium",
+    price: 49.9,
+    days: 30,
+    desc: "Banner na home + destaque maximo por 30 dias",
+  },
 ];
+
+function formatPrice(value: number) {
+  return `R$ ${value.toFixed(2).replace(".", ",")}`;
+}
 
 export default function PlansPage() {
   const { isAuthenticated } = useAuth();
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>("yearly");
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      {/* Hero */}
-      <section className="bg-hero-gradient text-white py-16 text-center">
+      <section className="bg-hero-gradient py-16 text-center text-white">
         <div className="container">
-          <h1 className="font-display text-4xl font-black mb-3">Planos e Preços</h1>
-          <p className="text-blue-100 text-lg max-w-xl mx-auto">
-            Comece grátis por 30 dias. Sem cartão de crédito. Cancele quando quiser.
+          <h1 className="mb-3 font-display text-4xl font-black">
+            Planos e Precos
+          </h1>
+          <p className="mx-auto max-w-2xl text-lg text-blue-100">
+            Comece com valores promocionais de lancamento. No anual, o custo por
+            mes fica menor e voce trava o preco por 12 meses.
           </p>
         </div>
       </section>
 
-      {/* Plans */}
       <section className="container py-14">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="mx-auto mb-10 flex max-w-sm rounded-2xl border border-gray-200 bg-white p-1 shadow-sm">
+          <button
+            type="button"
+            onClick={() => setBillingCycle("monthly")}
+            className={`flex-1 rounded-xl px-4 py-3 text-sm font-bold transition-all ${
+              billingCycle === "monthly"
+                ? "bg-gray-900 text-white"
+                : "text-gray-500 hover:text-gray-800"
+            }`}
+          >
+            Mensal
+          </button>
+          <button
+            type="button"
+            onClick={() => setBillingCycle("yearly")}
+            className={`flex-1 rounded-xl px-4 py-3 text-sm font-bold transition-all ${
+              billingCycle === "yearly"
+                ? "bg-brand-gradient text-white"
+                : "text-gray-500 hover:text-gray-800"
+            }`}
+          >
+            Anual
+          </button>
+        </div>
+
+        <div className="mx-auto mb-8 max-w-2xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+            {billingCycle === "yearly"
+              ? "Melhor conversao para o lancamento"
+              : "Entrada facil para testar"}
+          </p>
+          <h2 className="mt-2 font-display text-3xl font-black text-gray-900">
+            {billingCycle === "yearly"
+              ? "Pague menos no ano e aumente o ticket medio"
+              : "Mensal para entrar, anual para escalar"}
+          </h2>
+        </div>
+
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3">
           {PLANS.map(plan => {
             const IconComp = plan.icon;
+            const variant = plan.variants[billingCycle];
+            const badge = plan.badges[billingCycle];
+            const isPremium = plan.id === "premium";
+
             return (
-              <div key={plan.id} className={`bg-white rounded-2xl p-8 border-2 ${plan.color} relative shadow-sm`}>
-                {plan.badge && (
+              <div
+                key={plan.id}
+                className={`relative rounded-2xl border-2 bg-white p-8 shadow-sm ${plan.color}`}
+              >
+                {badge && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className={`text-xs font-black px-4 py-1.5 rounded-full whitespace-nowrap ${plan.id === "premium" ? "bg-amber-400 text-gray-900" : "bg-blue-600 text-white"}`}>
-                      {plan.badge}
+                    <span
+                      className={`whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-black ${
+                        isPremium
+                          ? "bg-amber-400 text-gray-900"
+                          : "bg-blue-600 text-white"
+                      }`}
+                    >
+                      {badge}
                     </span>
                   </div>
                 )}
 
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${plan.id === "premium" ? "bg-orange-gradient" : plan.id === "profissional" ? "bg-brand-gradient" : "bg-gray-100"}`}>
-                    <IconComp className={`w-5 h-5 ${plan.id !== "gratis" ? "text-white" : "text-gray-600"}`} />
+                <div className="mb-4 flex items-center gap-3">
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl ${
+                      isPremium
+                        ? "bg-orange-gradient"
+                        : plan.id === "profissional"
+                          ? "bg-brand-gradient"
+                          : "bg-gray-100"
+                    }`}
+                  >
+                    <IconComp
+                      className={`h-5 w-5 ${
+                        plan.id !== "gratis" ? "text-white" : "text-gray-600"
+                      }`}
+                    />
                   </div>
-                  <h3 className="font-display font-bold text-xl text-gray-900">{plan.name}</h3>
+                  <h3 className="font-display text-xl font-bold text-gray-900">
+                    {plan.name}
+                  </h3>
                 </div>
 
-                <div className="flex items-baseline gap-1 mb-6">
+                <p className="mb-5 text-sm text-gray-500">{plan.description}</p>
+
+                <div className="mb-2 flex items-baseline gap-1">
                   <span className="text-4xl font-black text-gray-900">
-                    {plan.price === 0 ? "Grátis" : `R$ ${plan.price.toFixed(2).replace(".", ",")}`}
+                    {variant.price === 0 ? "Gratis" : formatPrice(variant.price)}
                   </span>
-                  {plan.price > 0 && <span className="text-gray-500 text-sm">{plan.period}</span>}
+                  {variant.price > 0 && (
+                    <span className="text-sm text-gray-500">{variant.period}</span>
+                  )}
                 </div>
 
-                <ul className="space-y-3 mb-6">
-                  {plan.features.map(f => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-gray-700">
-                      <CheckCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                      {f}
+                {variant.note && (
+                  <p className="text-sm font-medium text-gray-500">{variant.note}</p>
+                )}
+                {variant.savings && (
+                  <p className="mt-1 text-sm font-bold text-green-600">
+                    {variant.savings}
+                  </p>
+                )}
+
+                <ul className="mb-6 mt-6 space-y-3">
+                  {plan.features.map(feature => (
+                    <li
+                      key={feature}
+                      className="flex items-start gap-2 text-sm text-gray-700"
+                    >
+                      <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
+                      {feature}
                     </li>
                   ))}
-                  {plan.notIncluded.map(f => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-gray-400 line-through">
-                      <CheckCircle className="w-4 h-4 text-gray-300 shrink-0 mt-0.5" />
-                      {f}
+                  {plan.notIncluded.map(feature => (
+                    <li
+                      key={feature}
+                      className="flex items-start gap-2 text-sm text-gray-400 line-through"
+                    >
+                      <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-gray-300" />
+                      {feature}
                     </li>
                   ))}
                 </ul>
 
                 <Link href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE}>
-                  <Button className={`w-full rounded-xl py-5 font-bold text-base ${plan.btnClass}`}>
-                    {plan.price === 0 ? "Começar Grátis" : "Assinar Agora"}
+                  <Button
+                    className={`w-full rounded-xl py-5 text-base font-bold ${plan.btnClass}`}
+                  >
+                    {variant.price === 0 ? "Comecar Gratis" : "Assinar Agora"}
                   </Button>
                 </Link>
               </div>
@@ -145,35 +300,42 @@ export default function PlansPage() {
         </div>
       </section>
 
-      {/* Boosters */}
-      <section className="bg-white py-14 border-y border-gray-100">
+      <section className="border-y border-gray-100 bg-white py-14">
         <div className="container">
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 px-4 py-2 rounded-full text-sm font-bold mb-4">
-              <Zap className="w-4 h-4" /> BOOSTER — Turbine seu anúncio
+          <div className="mb-10 text-center">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-amber-100 px-4 py-2 text-sm font-bold text-amber-700">
+              <Zap className="h-4 w-4" /> BOOSTER - Turbine seu anuncio
             </div>
-            <h2 className="font-display text-3xl font-black text-gray-900 mb-3">
-              Destaque seu anúncio e venda mais rápido
+            <h2 className="mb-3 font-display text-3xl font-black text-gray-900">
+              Destaque seu anuncio e venda mais rapido
             </h2>
-            <p className="text-gray-500 max-w-xl mx-auto">
-              Com o Booster, seu anúncio aparece no topo das buscas e na home do Norte Vivo. Receba até 10x mais contatos.
+            <p className="mx-auto max-w-xl text-gray-500">
+              Mesmo com plano acessivel, voce ainda pode impulsionar anuncios
+              especificos quando quiser mais alcance.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {BOOSTERS.map(b => (
-              <div key={b.name} className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-200">
-                <div className="w-10 h-10 bg-orange-gradient rounded-xl flex items-center justify-center mb-4">
-                  <Zap className="w-5 h-5 text-white" />
+          <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
+            {BOOSTERS.map(booster => (
+              <div
+                key={booster.name}
+                className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-6"
+              >
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-orange-gradient">
+                  <Zap className="h-5 w-5 text-white" />
                 </div>
-                <h3 className="font-display font-bold text-lg text-gray-900 mb-1">{b.name}</h3>
-                <p className="text-sm text-gray-600 mb-4">{b.desc}</p>
-                <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-2xl font-black text-gray-900">R$ {b.price.toFixed(2).replace(".", ",")}</span>
-                  <span className="text-gray-500 text-sm">/{b.days} dias</span>
+                <h3 className="mb-1 font-display text-lg font-bold text-gray-900">
+                  {booster.name}
+                </h3>
+                <p className="mb-4 text-sm text-gray-600">{booster.desc}</p>
+                <div className="mb-4 flex items-baseline gap-1">
+                  <span className="text-2xl font-black text-gray-900">
+                    {formatPrice(booster.price)}
+                  </span>
+                  <span className="text-sm text-gray-500">/{booster.days} dias</span>
                 </div>
                 <Link href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE}>
-                  <Button className="w-full bg-orange-gradient text-white rounded-xl font-bold hover:opacity-90">
+                  <Button className="w-full rounded-xl bg-orange-gradient font-bold text-white hover:opacity-90">
                     Ativar Booster
                   </Button>
                 </Link>
