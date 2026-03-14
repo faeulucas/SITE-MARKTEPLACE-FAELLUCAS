@@ -48,7 +48,10 @@ export default function ListingDetailPage() {
     {
       listingId: listing?.id ?? 0,
       categoryId: listing?.categoryId ?? 0,
-      subcategory: "subcategory" in (listing ?? {}) ? listing?.subcategory ?? undefined : undefined,
+      subcategory:
+        "subcategory" in (listing ?? {})
+          ? (listing?.subcategory ?? undefined)
+          : undefined,
       cityId: listing?.cityId ?? undefined,
       limit: 8,
     },
@@ -57,37 +60,49 @@ export default function ListingDetailPage() {
   const favMutation = trpc.advertiser.toggleFavorite.useMutation({
     onSuccess: data =>
       toast.success(
-        data.favorited
-          ? "Adicionado aos favoritos!"
-          : "Removido dos favoritos"
+        data.favorited ? "Adicionado aos favoritos!" : "Removido dos favoritos"
       ),
   });
 
   const images = listing?.images || [];
   const sellerPersonType =
-    listing?.seller && "personType" in listing.seller ? listing.seller.personType : undefined;
+    listing?.seller && "personType" in listing.seller
+      ? listing.seller.personType
+      : undefined;
   const sellerCompanyName =
-    listing?.seller && "companyName" in listing.seller ? listing.seller.companyName : undefined;
-  const listingSubcategory = listing && "subcategory" in listing ? listing.subcategory : undefined;
-  const listingCondition = listing && "itemCondition" in listing ? listing.itemCondition : undefined;
+    listing?.seller && "companyName" in listing.seller
+      ? listing.seller.companyName
+      : undefined;
+  const listingSubcategory =
+    listing && "subcategory" in listing ? listing.subcategory : undefined;
+  const listingCondition =
+    listing && "itemCondition" in listing ? listing.itemCondition : undefined;
   const sellerDisplayName =
     sellerPersonType === "pj"
       ? sellerCompanyName || listing?.seller?.name || "Loja"
       : listing?.seller?.name || "Anunciante";
   const sellerInitial = sellerDisplayName.charAt(0)?.toUpperCase() || "?";
-  const sellerStorageKey = listing?.seller?.id ? `norte-vivo:follow-seller:${listing.seller.id}` : "";
-  const priceAlertKey = listing?.id ? `norte-vivo:price-alert:${listing.id}` : "";
+  const sellerStorageKey = listing?.seller?.id
+    ? `norte-vivo:follow-seller:${listing.seller.id}`
+    : "";
+  const priceAlertKey = listing?.id
+    ? `norte-vivo:price-alert:${listing.id}`
+    : "";
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!listing) return;
 
     if (sellerStorageKey) {
-      setIsFollowingSeller(window.localStorage.getItem(sellerStorageKey) === "1");
+      setIsFollowingSeller(
+        window.localStorage.getItem(sellerStorageKey) === "1"
+      );
     } else {
       setIsFollowingSeller(false);
     }
-    setHasPriceAlert(priceAlertKey ? window.localStorage.getItem(priceAlertKey) === "1" : false);
+    setHasPriceAlert(
+      priceAlertKey ? window.localStorage.getItem(priceAlertKey) === "1" : false
+    );
   }, [listing, priceAlertKey, sellerStorageKey]);
 
   if (isLoading) {
@@ -174,7 +189,11 @@ export default function ListingDetailPage() {
     const nextValue = !isFollowingSeller;
     window.localStorage.setItem(sellerStorageKey, nextValue ? "1" : "0");
     setIsFollowingSeller(nextValue);
-    toast.success(nextValue ? "Loja seguida com sucesso." : "Voce deixou de seguir esta loja.");
+    toast.success(
+      nextValue
+        ? "Loja seguida com sucesso."
+        : "Voce deixou de seguir esta loja."
+    );
   };
 
   const togglePriceAlert = () => {
@@ -208,10 +227,10 @@ export default function ListingDetailPage() {
             Anuncios
           </Link>
           <ChevronRight className="h-3 w-3" />
-            <span className="truncate font-medium text-gray-900">
-              {listing.title}
-            </span>
-          </div>
+          <span className="truncate font-medium text-gray-900">
+            {listing.title}
+          </span>
+        </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
@@ -432,7 +451,11 @@ export default function ListingDetailPage() {
 
               <div className="space-y-3">
                 {whatsappUrl && (
-                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Button className="w-full rounded-xl bg-green-500 py-6 text-base font-bold text-white hover:bg-green-600">
                       <MessageCircle className="mr-2 h-5 w-5" />
                       Chamar no WhatsApp
@@ -459,6 +482,18 @@ export default function ListingDetailPage() {
                   <Store className="mr-2 h-5 w-5" />
                   {isFollowingSeller ? "Seguindo loja" : "Seguir loja"}
                 </Button>
+                {listing.seller?.id && (
+                  <Link href={`/loja/${listing.seller.id}`}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full rounded-xl border-blue-200 py-6 text-base font-semibold text-blue-700 hover:bg-blue-50"
+                    >
+                      <Store className="mr-2 h-5 w-5" />
+                      Ver vitrine da loja
+                    </Button>
+                  </Link>
+                )}
                 <Button
                   type="button"
                   variant="outline"
@@ -466,7 +501,9 @@ export default function ListingDetailPage() {
                   className="w-full rounded-xl border-gray-200 py-6 text-base font-semibold text-gray-800 hover:bg-gray-50"
                 >
                   <Bell className="mr-2 h-5 w-5" />
-                  {hasPriceAlert ? "Aviso de preco ativo" : "Avisar queda de preco"}
+                  {hasPriceAlert
+                    ? "Aviso de preco ativo"
+                    : "Avisar queda de preco"}
                 </Button>
               </div>
 
@@ -514,7 +551,8 @@ export default function ListingDetailPage() {
                       Anuncios parecidos
                     </h2>
                     <p className="text-sm text-gray-500">
-                      Itens da mesma categoria para comparar melhor antes de falar com o anunciante.
+                      Itens da mesma categoria para comparar melhor antes de
+                      falar com o anunciante.
                     </p>
                   </div>
                 </div>

@@ -99,7 +99,7 @@ type HomeHighlightListing = {
   subcategory?: string | null;
   whatsapp?: string | null;
   images?: { url: string; isPrimary?: boolean | null }[];
-  seller?: { name?: string | null } | null;
+  seller?: { id?: number; name?: string | null } | null;
 };
 
 export default function Home() {
@@ -280,6 +280,9 @@ export default function Home() {
                   ?.name ||
                 item.subcategory ||
                 "Negocio local";
+              const storefrontHref = item.seller?.id
+                ? `/loja/${item.seller.id}`
+                : `/anuncio/${item.id}`;
               const whatsappHref = item.whatsapp
                 ? `https://wa.me/55${item.whatsapp.replace(/\D/g, "")}`
                 : null;
@@ -289,7 +292,7 @@ export default function Home() {
                   key={item.id}
                   className="overflow-hidden rounded-[24px] border border-gray-100 bg-white shadow-sm"
                 >
-                  <Link href={`/anuncio/${item.id}`} className="block">
+                  <Link href={storefrontHref} className="block">
                     <div className="relative h-36 overflow-hidden bg-gray-100">
                       {cover ? (
                         <img
@@ -329,7 +332,7 @@ export default function Home() {
                     </div>
 
                     <div className="mt-4 flex items-center justify-center gap-2">
-                      <Link href={`/anuncio/${item.id}`}>
+                      <Link href={storefrontHref}>
                         <Button
                           size="sm"
                           className="rounded-xl bg-brand-gradient text-white hover:opacity-90"
