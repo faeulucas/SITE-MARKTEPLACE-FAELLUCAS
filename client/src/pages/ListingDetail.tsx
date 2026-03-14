@@ -63,6 +63,33 @@ export default function ListingDetailPage() {
       ),
   });
 
+  const images = listing?.images || [];
+  const sellerPersonType =
+    listing?.seller && "personType" in listing.seller ? listing.seller.personType : undefined;
+  const sellerCompanyName =
+    listing?.seller && "companyName" in listing.seller ? listing.seller.companyName : undefined;
+  const listingSubcategory = listing && "subcategory" in listing ? listing.subcategory : undefined;
+  const listingCondition = listing && "itemCondition" in listing ? listing.itemCondition : undefined;
+  const sellerDisplayName =
+    sellerPersonType === "pj"
+      ? sellerCompanyName || listing?.seller?.name || "Loja"
+      : listing?.seller?.name || "Anunciante";
+  const sellerInitial = sellerDisplayName.charAt(0)?.toUpperCase() || "?";
+  const sellerStorageKey = listing?.seller?.id ? `norte-vivo:follow-seller:${listing.seller.id}` : "";
+  const priceAlertKey = listing?.id ? `norte-vivo:price-alert:${listing.id}` : "";
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!listing) return;
+
+    if (sellerStorageKey) {
+      setIsFollowingSeller(window.localStorage.getItem(sellerStorageKey) === "1");
+    } else {
+      setIsFollowingSeller(false);
+    }
+    setHasPriceAlert(priceAlertKey ? window.localStorage.getItem(priceAlertKey) === "1" : false);
+  }, [listing, priceAlertKey, sellerStorageKey]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -95,29 +122,6 @@ export default function ListingDetailPage() {
       </div>
     );
   }
-
-  const images = listing.images || [];
-  const sellerPersonType =
-    listing.seller && "personType" in listing.seller ? listing.seller.personType : undefined;
-  const sellerCompanyName =
-    listing.seller && "companyName" in listing.seller ? listing.seller.companyName : undefined;
-  const listingSubcategory = "subcategory" in listing ? listing.subcategory : undefined;
-  const listingCondition = "itemCondition" in listing ? listing.itemCondition : undefined;
-  const sellerDisplayName =
-    sellerPersonType === "pj"
-      ? sellerCompanyName || listing.seller?.name || "Loja"
-      : listing.seller?.name || "Anunciante";
-  const sellerInitial = sellerDisplayName.charAt(0)?.toUpperCase() || "?";
-  const sellerStorageKey = listing.seller?.id ? `norte-vivo:follow-seller:${listing.seller.id}` : "";
-  const priceAlertKey = `norte-vivo:price-alert:${listing.id}`;
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (sellerStorageKey) {
-      setIsFollowingSeller(window.localStorage.getItem(sellerStorageKey) === "1");
-    }
-    setHasPriceAlert(window.localStorage.getItem(priceAlertKey) === "1");
-  }, [priceAlertKey, sellerStorageKey]);
 
   const formatPrice = () => {
     if (!listing.price || listing.priceType === "free") return "Gratis";
