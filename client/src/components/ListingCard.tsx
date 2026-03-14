@@ -14,7 +14,7 @@ interface ListingCardProps {
   isFeatured?: boolean | null;
   viewCount?: number | null;
   createdAt: Date | string;
-  images?: { url: string; isPrimary?: boolean }[];
+  images?: { url: string; isPrimary?: boolean | null }[];
   seller?: { name?: string | null; isVerified?: boolean | null | undefined };
   categoryName?: string;
   type?: string | null;

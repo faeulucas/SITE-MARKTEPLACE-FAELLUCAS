@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import { listings, categories, cities, plans, listingImages, boosters, favorites, users, passwordResetTokens } from "../drizzle/schema";
-import { eq, desc, and, like, gte, lte, or, sql } from "drizzle-orm";
+import { eq, desc, and, like, gte, lte, or, sql, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import {
@@ -17,6 +17,34 @@ import {
   mockListings,
   mockPlans,
 } from "./mockData";
+
+async function attachImagesToListings<T extends { id: number }>(
+  db: Awaited<ReturnType<typeof getDb>>,
+  items: T[]
+): Promise<Array<T & { images: Array<(typeof listingImages.$inferSelect)> }>> {
+  if (!db || items.length === 0) {
+    return items.map(item => ({ ...item, images: [] }));
+  }
+
+  const ids = items.map(item => item.id);
+  const images = await db
+    .select()
+    .from(listingImages)
+    .where(inArray(listingImages.listingId, ids))
+    .orderBy(listingImages.listingId, listingImages.sortOrder, desc(listingImages.isPrimary));
+
+  const imagesByListingId = new Map<number, Array<(typeof listingImages.$inferSelect)>>();
+  for (const image of images) {
+    const existing = imagesByListingId.get(image.listingId) ?? [];
+    existing.push(image);
+    imagesByListingId.set(image.listingId, existing);
+  }
+
+  return items.map(item => ({
+    ...item,
+    images: imagesByListingId.get(item.id) ?? [],
+  }));
+}
 
 export const appRouter = router({
   system: systemRouter,
@@ -264,7 +292,13 @@ export const appRouter = router({
       }
       const conditions = [eq(listings.status, "active"), eq(listings.isBoosted, true)];
       if (input.cityId) conditions.push(eq(listings.cityId, input.cityId));
-      return db.select().from(listings).where(and(...conditions)).orderBy(desc(listings.createdAt)).limit(input.limit);
+      const items = await db
+        .select()
+        .from(listings)
+        .where(and(...conditions))
+        .orderBy(desc(listings.createdAt))
+        .limit(input.limit);
+      return attachImagesToListings(db, items);
     }),
     recentListings: publicProcedure.input(z.object({
       limit: z.number().default(20),
@@ -283,7 +317,13 @@ export const appRouter = router({
       const conditions: ReturnType<typeof eq>[] = [eq(listings.status, "active")];
       if (input.cityId) conditions.push(eq(listings.cityId, input.cityId));
       if (input.categoryId) conditions.push(eq(listings.categoryId, input.categoryId));
-      return db.select().from(listings).where(and(...conditions)).orderBy(desc(listings.createdAt)).limit(input.limit);
+      const items = await db
+        .select()
+        .from(listings)
+        .where(and(...conditions))
+        .orderBy(desc(listings.createdAt))
+        .limit(input.limit);
+      return attachImagesToListings(db, items);
     }),
     searchListings: publicProcedure.input(z.object({
       q: z.string().optional(),
@@ -317,7 +357,8 @@ export const appRouter = router({
       if (input.maxPrice) conditions.push(lte(listings.price, String(input.maxPrice)));
       const offset = (input.page - 1) * input.limit;
       const items = await db.select().from(listings).where(and(...conditions)).orderBy(desc(listings.isBoosted), desc(listings.createdAt)).limit(input.limit).offset(offset);
-      return { items, total: items.length };
+      const itemsWithImages = await attachImagesToListings(db, items);
+      return { items: itemsWithImages, total: items.length };
     }),
     listingById: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
       const db = await getDb();
@@ -341,7 +382,13 @@ export const appRouter = router({
       }
       const [cat] = await db.select().from(categories).where(eq(categories.slug, input.categorySlug)).limit(1);
       if (!cat) return [];
-      return db.select().from(listings).where(and(eq(listings.status, "active"), eq(listings.categoryId, cat.id))).orderBy(desc(listings.isBoosted), desc(listings.createdAt)).limit(input.limit);
+      const items = await db
+        .select()
+        .from(listings)
+        .where(and(eq(listings.status, "active"), eq(listings.categoryId, cat.id)))
+        .orderBy(desc(listings.isBoosted), desc(listings.createdAt))
+        .limit(input.limit);
+      return attachImagesToListings(db, items);
     }),
   }),
 
