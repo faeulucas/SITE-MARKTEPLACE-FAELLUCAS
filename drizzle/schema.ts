@@ -89,6 +89,7 @@ export const listings = mysqlTable("listings", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
   categoryId: int("categoryId").notNull(),
+  subcategory: varchar("subcategory", { length: 80 }),
   cityId: int("cityId"),
   title: varchar("title", { length: 200 }).notNull(),
   description: text("description"),

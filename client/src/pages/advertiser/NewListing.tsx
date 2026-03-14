@@ -3,6 +3,10 @@ import { Link, useLocation, useRoute } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { LOGIN_ROUTE } from "@/const";
 import { trpc } from "@/lib/trpc";
+import {
+  getSubcategoryFieldLabel,
+  getSubcategoryOptionsBySlug,
+} from "@/lib/listingSubcategories";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -66,6 +70,7 @@ export default function NewListing() {
   const [priceType, setPriceType] = useState("fixed");
   const [type, setType] = useState("product");
   const [categoryId, setCategoryId] = useState("");
+  const [subcategory, setSubcategory] = useState("");
   const [cityId, setCityId] = useState("");
   const [neighborhood, setNeighborhood] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -90,6 +95,7 @@ export default function NewListing() {
     setPriceType(listing.priceType ?? "fixed");
     setType(listing.type ?? "product");
     setCategoryId(String(listing.categoryId ?? ""));
+    setSubcategory(listing.subcategory ?? "");
     setCityId(listing.cityId ? String(listing.cityId) : "");
     setNeighborhood(listing.neighborhood ?? "");
     setWhatsapp(listing.whatsapp ?? "");
@@ -106,6 +112,10 @@ export default function NewListing() {
     const matcher = TYPE_CATEGORY_MATCHERS[type];
     return matcher ? matcher(category.slug) : true;
   });
+  const selectedCategory = filteredCategories.find(
+    category => String(category.id) === categoryId
+  );
+  const subcategoryOptions = getSubcategoryOptionsBySlug(selectedCategory?.slug);
 
   const isFoodListing = type === "food";
 
@@ -120,6 +130,17 @@ export default function NewListing() {
 
     setCategoryId(String(filteredCategories[0].id));
   }, [categoryId, filteredCategories]);
+
+  useEffect(() => {
+    if (!subcategoryOptions.length) {
+      setSubcategory("");
+      return;
+    }
+
+    if (subcategoryOptions.includes(subcategory)) return;
+
+    setSubcategory(subcategoryOptions[0]);
+  }, [subcategory, subcategoryOptions]);
 
   const createMutation = trpc.advertiser.createListing.useMutation();
 
@@ -180,6 +201,10 @@ export default function NewListing() {
       toast.error("Selecione uma categoria");
       return;
     }
+    if (subcategoryOptions.length > 0 && !subcategory) {
+      toast.error("Selecione uma subcategoria");
+      return;
+    }
 
     const payload = {
       title: title.trim(),
@@ -188,6 +213,7 @@ export default function NewListing() {
       priceType: priceType as any,
       type: type as any,
       categoryId: Number(categoryId),
+      subcategory: subcategory || undefined,
       cityId: cityId ? Number(cityId) : undefined,
       neighborhood: neighborhood || undefined,
       whatsapp: whatsapp || undefined,
@@ -357,6 +383,31 @@ export default function NewListing() {
                   </p>
                 </div>
               </div>
+
+              {subcategoryOptions.length > 0 && (
+                <div>
+                  <label className="text-sm font-semibold text-gray-700 mb-1.5 block">
+                    {getSubcategoryFieldLabel(selectedCategory?.slug)}
+                  </label>
+                  <Select value={subcategory} onValueChange={setSubcategory}>
+                    <SelectTrigger className="rounded-xl bg-gray-50">
+                      <SelectValue placeholder="Selecionar..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subcategoryOptions.map(option => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="mt-1 text-xs text-gray-400">
+                    {selectedCategory?.slug === "eletronicos"
+                      ? "Ex.: fone, cabo, carregador, celular ou notebook."
+                      : "Escolha o tipo mais proximo do item que voce esta anunciando."}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="space-y-4 pt-4 border-t border-gray-100">

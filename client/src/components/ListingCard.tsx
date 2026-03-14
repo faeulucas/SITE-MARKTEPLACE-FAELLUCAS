@@ -9,6 +9,7 @@ interface ListingCardProps {
   price?: string | null;
   priceType?: string | null;
   cityId?: number | null;
+  subcategory?: string | null;
   neighborhood?: string | null;
   isBoosted?: boolean | null;
   isFeatured?: boolean | null;
@@ -33,7 +34,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export default function ListingCard({
-  id, title, price, priceType, cityId, neighborhood, isBoosted, isFeatured,
+  id, title, price, priceType, cityId, subcategory, neighborhood, isBoosted, isFeatured,
   viewCount, createdAt, images, seller, categoryName, type, onFavorite, isFavorited, cityName
 }: ListingCardProps) {
   const primaryImage = images?.find(i => i.isPrimary) || images?.[0];
@@ -92,8 +93,10 @@ export default function ListingCard({
         {/* Content */}
         <div className="p-3">
           {/* Category */}
-          {categoryName && (
-            <span className="text-xs text-blue-600 font-medium">{categoryName}</span>
+          {(categoryName || subcategory) && (
+            <span className="text-xs text-blue-600 font-medium">
+              {[categoryName, subcategory].filter(Boolean).join(" · ")}
+            </span>
           )}
 
           {/* Title */}

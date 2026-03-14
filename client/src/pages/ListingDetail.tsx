@@ -78,6 +78,7 @@ export default function ListingDetailPage() {
     listing.seller && "personType" in listing.seller ? listing.seller.personType : undefined;
   const sellerCompanyName =
     listing.seller && "companyName" in listing.seller ? listing.seller.companyName : undefined;
+  const listingSubcategory = "subcategory" in listing ? listing.subcategory : undefined;
   const sellerDisplayName =
     sellerPersonType === "pj"
       ? sellerCompanyName || listing.seller?.name || "Loja"
@@ -227,6 +228,30 @@ export default function ListingDetailPage() {
             <div className="rounded-2xl bg-white p-6 shadow-sm">
               <div className="mb-4 flex items-start justify-between gap-4">
                 <div className="flex-1">
+                  {(listing.type || listingSubcategory) && (
+                    <div className="mb-2 flex flex-wrap gap-2">
+                      {listing.type && (
+                        <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                          {listing.type === "product"
+                            ? "Produto"
+                            : listing.type === "service"
+                              ? "Servico"
+                              : listing.type === "vehicle"
+                                ? "Veiculo"
+                                : listing.type === "property"
+                                  ? "Imovel"
+                                  : listing.type === "food"
+                                    ? "Delivery"
+                                    : "Vaga"}
+                        </span>
+                      )}
+                      {listingSubcategory && (
+                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                          {listingSubcategory}
+                        </span>
+                      )}
+                    </div>
+                  )}
                   <h1 className="mb-2 font-display text-2xl font-bold text-gray-900">
                     {listing.title}
                   </h1>

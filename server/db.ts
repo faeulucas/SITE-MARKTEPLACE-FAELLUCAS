@@ -7,7 +7,7 @@ import { ENV } from './_core/env';
 let _db: ReturnType<typeof drizzle> | null = null;
 let _schemaEnsured = false;
 
-async function ensureAuthSchema() {
+async function ensureAppSchema() {
   if (_schemaEnsured || !process.env.DATABASE_URL) return;
 
   const connection = await mysql.createConnection(process.env.DATABASE_URL);
@@ -20,6 +20,16 @@ async function ensureAuthSchema() {
     if (Array.isArray(columns) && columns.length === 0) {
       await connection.query(
         "ALTER TABLE users ADD COLUMN passwordHash varchar(255) NULL AFTER email"
+      );
+    }
+
+    const [listingSubcategoryColumns] = await connection.query(
+      "SHOW COLUMNS FROM listings LIKE 'subcategory'"
+    );
+
+    if (Array.isArray(listingSubcategoryColumns) && listingSubcategoryColumns.length === 0) {
+      await connection.query(
+        "ALTER TABLE listings ADD COLUMN subcategory varchar(80) NULL AFTER categoryId"
       );
     }
 
@@ -45,7 +55,7 @@ export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
       _db = drizzle(process.env.DATABASE_URL);
-      await ensureAuthSchema();
+      await ensureAppSchema();
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
