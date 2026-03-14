@@ -6,6 +6,7 @@ import { trpc } from "@/lib/trpc";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { getAdvertiserInsights } from "@/lib/advertiserInsights";
 import { CASHBACK_RULES } from "@/lib/cashback";
 import { getSegmentFromCategorySlug, SEGMENT_CONTENT } from "@/lib/segments";
 import { toast } from "sonner";
@@ -128,6 +129,7 @@ export default function AdvertiserDashboard() {
     listing => listing.status === "active" && !listing.isBoosted
   );
   const boostSuggestionListing = boostableListings[0] ?? null;
+  const insights = getAdvertiserInsights(listings);
   const trialDaysLeft = user?.trialStartedAt
     ? Math.max(0, 30 - Math.floor((Date.now() - new Date(user.trialStartedAt).getTime()) / 86400000))
     : 30;
@@ -444,6 +446,76 @@ export default function AdvertiserDashboard() {
           </div>
 
           <div className="space-y-6">
+            <section className="rounded-[28px] border border-gray-100 bg-white p-6 shadow-sm">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+                  <AlertCircle className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="font-display text-xl font-bold text-gray-900">Assistente do anunciante</h2>
+                  <p className="text-sm text-gray-500">
+                    Dicas automaticas para revisar, melhorar ou impulsionar o que esta no ar.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {insights.map(insight => {
+                  const toneClasses =
+                    insight.tone === "amber"
+                      ? "border-amber-200 bg-amber-50"
+                      : insight.tone === "emerald"
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-blue-200 bg-blue-50";
+
+                  const buttonClasses =
+                    insight.tone === "amber"
+                      ? "bg-amber-500 text-white hover:bg-amber-600"
+                      : insight.tone === "emerald"
+                        ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                        : "bg-blue-600 text-white hover:bg-blue-700";
+
+                  return (
+                    <div key={insight.id} className={`rounded-[22px] border p-4 ${toneClasses}`}>
+                      <p className="font-semibold text-gray-900">{insight.title}</p>
+                      <p className="mt-1 text-sm text-gray-700">{insight.description}</p>
+                      <div className="mt-3">
+                        {insight.durationDays && insight.listingId ? (
+                          <Button
+                            size="sm"
+                            className={`rounded-xl ${buttonClasses}`}
+                            onClick={() =>
+                              boostMutation.mutate({
+                                listingId: insight.listingId!,
+                                type: "featured",
+                                durationDays: insight.durationDays,
+                              })
+                            }
+                            disabled={boostMutation.isPending}
+                          >
+                            <Zap className="mr-2 h-4 w-4" />
+                            {insight.actionLabel}
+                          </Button>
+                        ) : insight.listingId ? (
+                          <Link href={`/anunciante/editar/${insight.listingId}`}>
+                            <Button size="sm" className={`rounded-xl ${buttonClasses}`}>
+                              <Pencil className="mr-2 h-4 w-4" />
+                              {insight.actionLabel}
+                            </Button>
+                          </Link>
+                        ) : (
+                          <Link href="/anunciante">
+                            <Button size="sm" className={`rounded-xl ${buttonClasses}`}>
+                              {insight.actionLabel}
+                            </Button>
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
 
             <section className="rounded-[28px] border border-gray-100 bg-white p-6 shadow-sm">
               <div className="mb-4 flex items-center gap-3">
