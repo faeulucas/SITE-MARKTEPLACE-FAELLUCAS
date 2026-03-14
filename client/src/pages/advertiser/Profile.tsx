@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { LOGIN_ROUTE } from "@/const";
@@ -30,6 +30,8 @@ export default function AdvertiserProfile() {
   const [bio, setBio] = useState("");
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [bannerUploading, setBannerUploading] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  const bannerInputRef = useRef<HTMLInputElement | null>(null);
   const utils = trpc.useUtils();
   const { data: cities } = trpc.public.cities.useQuery();
 
@@ -214,25 +216,27 @@ export default function AdvertiserProfile() {
                 biblioteca do aparelho.
               </p>
             </div>
-            <label className="w-full cursor-pointer sm:w-auto">
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleAvatarChange}
-              />
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarChange}
+            />
+            <div className="w-full sm:w-auto">
               <Button
                 type="button"
                 variant="outline"
                 className="w-full rounded-2xl sm:w-auto"
                 disabled={avatarUploading || uploadAvatarMutation.isPending}
+                onClick={() => avatarInputRef.current?.click()}
               >
                 <Camera className="mr-2 h-4 w-4" />
                 {avatarUploading || uploadAvatarMutation.isPending
                   ? "Enviando..."
                   : "Escolher foto"}
               </Button>
-            </label>
+            </div>
           </div>
 
           <div className="mb-6 overflow-hidden rounded-[24px] border border-gray-100 bg-white">
@@ -256,25 +260,27 @@ export default function AdvertiserProfile() {
                   Esse banner aparece no topo da sua vitrine publica.
                 </p>
               </div>
-              <label className="w-full cursor-pointer sm:w-auto">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleBannerChange}
-                />
+              <input
+                ref={bannerInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleBannerChange}
+              />
+              <div className="w-full sm:w-auto">
                 <Button
                   type="button"
                   variant="outline"
                   className="w-full rounded-2xl sm:w-auto"
                   disabled={bannerUploading || uploadBannerMutation.isPending}
+                  onClick={() => bannerInputRef.current?.click()}
                 >
                   <Camera className="mr-2 h-4 w-4" />
                   {bannerUploading || uploadBannerMutation.isPending
                     ? "Enviando..."
                     : "Escolher banner"}
                 </Button>
-              </label>
+              </div>
             </div>
           </div>
 
