@@ -346,7 +346,7 @@ export default function NewListing() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-1.5 block">Tipo de anuncio *</label>
+                  <label className="text-sm font-semibold text-gray-700 mb-1.5 block">Tipo *</label>
                   <Select value={type} onValueChange={setType}>
                     <SelectTrigger className="rounded-xl bg-gray-50">
                       <SelectValue />
