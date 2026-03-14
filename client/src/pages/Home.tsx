@@ -114,6 +114,7 @@ export default function Home() {
   const [, navigate] = useLocation();
   const [selectedCity, setSelectedCity] = useState<number | null>(null);
   const [categoryCarouselApi, setCategoryCarouselApi] = useState<CarouselApi>();
+  const [cashbackCarouselApi, setCashbackCarouselApi] = useState<CarouselApi>();
 
   const { data: categories } = trpc.public.categories.useQuery();
   const { data: topCategories } = trpc.public.topCategories.useQuery({
@@ -203,6 +204,21 @@ export default function Home() {
 
     return () => window.clearInterval(timer);
   }, [categoryCarouselApi, featuredCategories]);
+
+  useEffect(() => {
+    if (!cashbackCarouselApi) return;
+
+    const timer = window.setInterval(() => {
+      if (cashbackCarouselApi.canScrollNext()) {
+        cashbackCarouselApi.scrollNext();
+        return;
+      }
+
+      cashbackCarouselApi.scrollTo(0);
+    }, 3200);
+
+    return () => window.clearInterval(timer);
+  }, [cashbackCarouselApi]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -436,7 +452,7 @@ export default function Home() {
         </div>
 
         <div className="md:hidden">
-          <Carousel opts={{ align: "start" }}>
+          <Carousel opts={{ align: "start", loop: true }} setApi={setCashbackCarouselApi}>
             <CarouselContent className="-ml-2">
               {CASHBACK_RULES.slice(0, 4).map(rule => (
                 <CarouselItem key={rule.slug} className="basis-[88%] pl-2">
