@@ -65,27 +65,27 @@ export default function MobileBottomNav() {
         <div className="mx-auto grid max-w-md grid-cols-5 gap-2">
           <Link
             href="/"
-            className={`flex flex-col items-center gap-1 px-2 py-1 text-xs font-medium ${
+            className={`flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-[11px] font-medium ${
               !menuOpen && location === "/" ? "text-orange-500" : "text-slate-700"
             }`}
           >
             <Home className="h-5 w-5" />
-            Inicio
+            <span className="whitespace-nowrap">Inicio</span>
           </Link>
           <Link
             href="/busca"
-            className={`flex flex-col items-center gap-1 px-2 py-1 text-xs font-medium ${
+            className={`flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-[11px] font-medium ${
               !menuOpen && location.startsWith("/busca")
                 ? "text-orange-500"
                 : "text-slate-700"
             }`}
           >
             <Search className="h-5 w-5" />
-            Buscar
+            <span className="whitespace-nowrap">Buscar</span>
           </Link>
           <Link
             href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE}
-            className={`flex flex-col items-center gap-1 px-2 py-1 text-xs font-medium ${
+            className={`flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-[11px] font-medium ${
               !menuOpen &&
               (location.startsWith("/anunciante/novo") || location.startsWith("/anunciar"))
                 ? "text-orange-500"
@@ -93,11 +93,11 @@ export default function MobileBottomNav() {
             }`}
           >
             <Zap className="h-5 w-5" />
-            Anunciar
+            <span className="whitespace-nowrap">Anunciar</span>
           </Link>
           <Link
             href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE}
-            className={`flex flex-col items-center gap-1 px-2 py-1 text-xs font-medium ${
+            className={`flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-[11px] font-medium ${
               !menuOpen &&
               (location.startsWith("/anunciante") || location.startsWith("/entrar"))
                 ? "text-orange-500"
@@ -105,17 +105,17 @@ export default function MobileBottomNav() {
             }`}
           >
             <MessageCircle className="h-5 w-5" />
-            Chat
+            <span className="whitespace-nowrap">Chat</span>
           </Link>
           <button
             type="button"
             onClick={() => setMenuOpen(current => !current)}
-            className={`flex flex-col items-center gap-1 px-2 py-1 text-xs font-medium ${
+            className={`flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-[11px] font-medium ${
               menuOpen ? "text-orange-500" : "text-slate-700"
             }`}
           >
             {menuOpen ? <LayoutGrid className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            Menu
+            <span className="whitespace-nowrap">Menu</span>
           </button>
         </div>
       </nav>
