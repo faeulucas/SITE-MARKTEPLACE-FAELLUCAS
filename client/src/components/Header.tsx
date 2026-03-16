@@ -304,13 +304,14 @@ export default function Header({
 
       <div className="border-t border-slate-100 bg-white">
         <div className="container">
-          <div className="flex items-center gap-2 overflow-x-auto py-3">
-            {HEADER_PILLS.map(item => {
+          <div className="overflow-hidden py-3">
+            <div className="flex w-max items-center gap-2 motion-safe:animate-pill-marquee">
+              {[...HEADER_PILLS, ...HEADER_PILLS].map((item, index) => {
               const Icon = item.icon;
               const href = item.label === "Favoritos" && !isAuthenticated ? LOGIN_ROUTE : item.href;
               return (
                 <Link
-                  key={item.label}
+                  key={`${item.label}-${index}`}
                   href={href}
                   className="inline-flex shrink-0 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
                 >
@@ -320,7 +321,8 @@ export default function Header({
                   {item.label}
                 </Link>
               );
-            })}
+              })}
+            </div>
           </div>
         </div>
       </div>

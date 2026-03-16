@@ -189,6 +189,11 @@
     50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
   }
   .boost-pulse { animation: boostPulse 2s infinite; }
+  @keyframes pillMarquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(-50% - 0.25rem)); }
+  }
+  .animate-pill-marquee { animation: pillMarquee 24s linear infinite; }
 }
 
 @layer components {
