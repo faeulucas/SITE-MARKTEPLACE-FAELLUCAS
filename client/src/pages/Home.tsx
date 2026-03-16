@@ -115,6 +115,13 @@ const MAIN_SHORTCUTS = [
     icon: Store,
     tone: "bg-slate-900 text-white",
   },
+  {
+    label: "Servicos",
+    description: "Prestadores e negocios locais",
+    href: "/busca?q=servicos",
+    icon: HeartHandshake,
+    tone: "bg-emerald-500 text-white",
+  },
 ];
 
 const PRIMARY_CATEGORIES = [
@@ -231,22 +238,24 @@ export default function Home() {
                   Pioneiro logo na primeira busca.
                 </p>
 
-                <div className="mt-6 grid gap-3 md:grid-cols-3">
+                <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
                   {MAIN_SHORTCUTS.map(item => {
                     const Icon = item.icon;
                     return (
                       <a
                         key={item.label}
                         href={item.href}
-                        className={`rounded-[24px] px-4 py-4 shadow-lg transition-transform hover:-translate-y-0.5 ${item.tone}`}
+                        className={`rounded-[28px] px-4 py-4 shadow-lg transition-transform hover:-translate-y-0.5 ${item.tone}`}
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-col items-start gap-4">
                           <div className="rounded-2xl bg-black/10 p-3">
-                            <Icon className="h-5 w-5" />
+                            <Icon className="h-6 w-6" />
                           </div>
                           <div className="min-w-0">
-                            <p className="font-semibold leading-tight">{item.label}</p>
-                            <p className="mt-1 text-sm leading-5 opacity-80">
+                            <p className="font-display text-lg font-bold leading-tight">
+                              {item.label}
+                            </p>
+                            <p className="mt-1 text-xs leading-5 opacity-80 sm:text-sm">
                               {item.description}
                             </p>
                           </div>
@@ -409,10 +418,10 @@ export default function Home() {
                     <Link
                       key={item.id}
                       href={`/anuncio/${item.id}`}
-                      className="min-w-[84%] snap-center rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm"
+                      className="min-w-[84%] snap-center rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-slate-100 text-lg font-black text-blue-700">
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-slate-100 text-lg font-black text-blue-700">
                           {cover ? (
                             <img
                               src={cover}
@@ -424,10 +433,10 @@ export default function Home() {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="truncate font-display text-lg font-bold text-slate-900">
+                          <p className="truncate font-display text-xl font-bold text-slate-900">
                             {displayName}
                           </p>
-                          <p className="truncate text-xs text-slate-500">
+                          <p className="mt-1 truncate text-sm text-slate-500">
                             {cities?.find(city => city.id === item.cityId)?.name ||
                               "Norte Pioneiro"}
                           </p>
@@ -587,10 +596,10 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 xl:grid xl:grid-cols-4 xl:overflow-visible xl:pb-0">
-            {PRIMARY_CATEGORIES.map(item => {
-              const Icon = item.icon;
-              return (
+            <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 xl:grid xl:grid-cols-4 xl:overflow-visible xl:pb-0">
+              {PRIMARY_CATEGORIES.map(item => {
+                const Icon = item.icon;
+                return (
                 <Link
                   key={item.title}
                   href={`/busca?q=${encodeURIComponent(item.query)}`}
@@ -602,16 +611,16 @@ export default function Home() {
                   <h3 className="mt-6 font-display text-2xl font-black sm:mt-8 sm:text-3xl">
                     {item.title}
                   </h3>
-                  <p className="mt-2 text-sm text-white/85">
-                    Ver anuncios e servicos relacionados.
-                  </p>
-                </Link>
+                    <p className="mt-2 text-sm text-white/85">
+                      Ver anuncios e servicos relacionados.
+                    </p>
+                  </Link>
               );
             })}
           </div>
 
           {topCategoryList && topCategoryList.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-4 hidden flex-wrap gap-2 sm:flex">
               {topCategoryList.map(category => (
                 <Link key={category.id} href={`/categoria/${category.slug}`}>
                   <span className="inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-100">
@@ -703,9 +712,9 @@ export default function Home() {
                     <Link
                       key={listing.id}
                       href={`/anuncio/${listing.id}`}
-                      className="flex items-center gap-3 rounded-[24px] border border-slate-200 bg-white p-3 shadow-sm"
+                      className="flex items-center gap-3 rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm"
                     >
-                      <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-slate-100">
+                      <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-slate-100">
                         {image ? (
                           <img
                             src={image}
