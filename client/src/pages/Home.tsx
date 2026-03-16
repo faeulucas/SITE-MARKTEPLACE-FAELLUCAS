@@ -223,7 +223,7 @@ export default function Home() {
 
       <main className="pb-24 md:pb-0">
         <section className="container pt-6 pb-4">
-          <div className="overflow-hidden rounded-[32px] bg-[linear-gradient(135deg,#0f172a_0%,#1d4ed8_45%,#f97316_120%)] px-5 py-6 text-white shadow-[0_20px_70px_rgba(15,23,42,0.18)] sm:px-8 sm:py-10">
+          <div className="hidden overflow-hidden rounded-[32px] bg-[linear-gradient(135deg,#0f172a_0%,#1d4ed8_45%,#f97316_120%)] px-5 py-6 text-white shadow-[0_20px_70px_rgba(15,23,42,0.18)] sm:block sm:px-8 sm:py-10">
             <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
               <div>
                 <div className="hidden items-center gap-2 rounded-full bg-white/12 px-4 py-2 text-sm font-semibold text-white sm:inline-flex">
