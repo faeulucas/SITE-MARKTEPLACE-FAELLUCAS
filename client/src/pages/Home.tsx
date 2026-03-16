@@ -591,10 +591,10 @@ export default function Home() {
                 Booster
               </p>
               <h2 className="font-display text-2xl font-black text-slate-900 sm:text-3xl">
-                Anuncios em destaque
+                Anuncios patrocinados
               </h2>
               <p className="mt-2 text-sm text-slate-500">
-                Ofertas que merecem mais visibilidade no Norte Vivo.
+                Mais visibilidade para ofertas impulsionadas no Norte Vivo.
               </p>
             </div>
             <Link href="/booster">
@@ -616,20 +616,20 @@ export default function Home() {
                   return (
                     <div
                       key={listing.id}
-                      className="min-w-[82%] snap-center overflow-hidden rounded-[28px] border border-amber-200 bg-white shadow-sm ring-1 ring-amber-100 sm:min-w-[360px] xl:min-w-0"
+                      className="min-w-[62%] snap-center overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm sm:min-w-[360px] xl:min-w-0"
                     >
-                      <div className="flex items-center justify-between bg-amber-50 px-4 py-3">
-                        <div className="inline-flex items-center gap-1 rounded-full bg-amber-400 px-3 py-1 text-xs font-black text-white">
+                      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+                        <div className="inline-flex items-center gap-1 rounded-full bg-orange-500 px-2.5 py-1 text-[11px] font-black text-white">
                           <Zap className="h-3.5 w-3.5" />
                           BOOSTER
                         </div>
-                        <span className="text-xs font-semibold text-amber-700">
-                          Destaque local
+                        <span className="text-[11px] font-semibold text-slate-500">
+                          Patrocinado
                         </span>
                       </div>
                       <div className="sm:hidden">
                         <Link href={`/anuncio/${listing.id}`} className="block">
-                          <div className="aspect-[4/2.8] overflow-hidden bg-slate-100">
+                          <div className="aspect-[4/3] overflow-hidden bg-slate-100">
                             {primaryImage ? (
                           <img
                             src={primaryImage}
@@ -642,9 +642,9 @@ export default function Home() {
                               {listing.title.charAt(0).toUpperCase()}
                             </span>
                           </div>
-                        )}
+                          )}
                       </div>
-                      <div className="p-4">
+                      <div className="p-3.5">
                         <div className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-700">
                           {[
                             categories?.find(category => category.id === listing.categoryId)?.name,
@@ -653,23 +653,24 @@ export default function Home() {
                             .filter(Boolean)
                             .join(" · ")}
                         </div>
-                        <h3 className="mt-3 line-clamp-2 text-lg font-bold leading-7 text-slate-900">
+                        <h3 className="mt-2.5 line-clamp-2 text-base font-bold leading-6 text-slate-900">
                           {listing.title}
                         </h3>
-                        <p className="mt-2 text-2xl font-black text-blue-700">
+                        <p className="mt-2 text-xl font-black text-blue-700">
                           {listing.price
                             ? `R$ ${Number(listing.price).toLocaleString("pt-BR", {
                                 minimumFractionDigits: 2,
                               })}`
                             : "Sob consulta"}
                         </p>
-                        <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
+                        <div className="mt-2.5 flex flex-col gap-1.5 text-xs text-slate-500">
                           <span className="inline-flex items-center gap-1">
                             <MapPin className="h-3.5 w-3.5" />
                             {listing.neighborhood ||
                               cities?.find(city => city.id === listing.cityId)?.name ||
                               "Norte Pioneiro"}
                           </span>
+                          <span>{new Date(listing.createdAt).toLocaleDateString("pt-BR")}</span>
                         </div>
                       </div>
                     </Link>
