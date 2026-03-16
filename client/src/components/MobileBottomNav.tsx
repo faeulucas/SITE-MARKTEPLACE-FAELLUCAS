@@ -61,7 +61,7 @@ export default function MobileBottomNav() {
 
   return (
     <>
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-3 py-2 backdrop-blur md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-[61] border-t border-slate-200 bg-white/95 px-3 py-2 backdrop-blur md:hidden">
         <div className="mx-auto grid max-w-md grid-cols-5 gap-2">
           <Link
             href="/"
@@ -121,14 +121,14 @@ export default function MobileBottomNav() {
       </nav>
 
       <div
-        className={`fixed inset-x-0 bottom-[72px] top-0 z-40 overflow-hidden bg-white md:hidden ${
+        className={`fixed inset-x-0 bottom-[72px] top-0 z-[60] overflow-hidden bg-white md:hidden ${
           menuOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
         <div
-          className={`h-full overflow-y-auto border-t border-slate-200 shadow-[0_-18px_60px_rgba(15,23,42,0.16)] transition-all duration-200 ease-out ${
+          className={`h-full overflow-y-auto border-t border-slate-200 bg-white shadow-[0_-18px_60px_rgba(15,23,42,0.16)] transition-all duration-200 ease-out ${
             menuOpen
-              ? "translate-y-0 opacity-100"
+              ? "translate-y-0 translate-x-0 opacity-100"
               : "translate-y-4 opacity-0"
           }`}
           style={{ transformOrigin: "bottom right" }}
