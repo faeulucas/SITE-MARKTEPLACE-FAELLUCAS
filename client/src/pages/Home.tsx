@@ -332,7 +332,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="guia-local" className="container py-8">
+        <section id="guia-local" className="hidden container py-8 sm:block">
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-600">
