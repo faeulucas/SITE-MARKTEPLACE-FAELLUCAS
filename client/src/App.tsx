@@ -22,6 +22,9 @@ import HowItWorksPage from "./pages/HowItWorks";
 import TermsPage from "./pages/Terms";
 import PrivacyPage from "./pages/Privacy";
 import CityPage from "./pages/City";
+import GuidePage from "./pages/Guide";
+import StoresPage from "./pages/Stores";
+import BoosterPage from "./pages/Booster";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -42,6 +45,9 @@ function Router() {
       <Route path="/cadastro" component={LoginPage} />
       <Route path="/redefinir-senha" component={ResetPasswordPage} />
       <Route path="/busca" component={SearchPage} />
+      <Route path="/guia" component={GuidePage} />
+      <Route path="/lojas" component={StoresPage} />
+      <Route path="/booster" component={BoosterPage} />
       <Route path="/anuncio/:id" component={ListingDetailPage} />
       <Route path="/categoria/:slug" component={CategoryPage} />
       <Route path="/cidade/:slug" component={CityPage} />

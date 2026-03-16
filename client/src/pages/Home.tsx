@@ -15,7 +15,6 @@ import {
   Building2,
   Car,
   CircleUserRound,
-  Cross,
   HeartHandshake,
   Home as HomeIcon,
   LayoutGrid,
@@ -98,21 +97,21 @@ const MAIN_SHORTCUTS = [
   {
     label: "Guia Local",
     description: "Servicos e contatos da sua cidade",
-    href: "#guia-local",
+    href: "/guia",
     icon: MapPin,
     tone: "bg-white text-slate-900",
   },
   {
     label: "Marketplace",
     description: "Produtos, servicos e oportunidades",
-    href: "#marketplace",
+    href: "/busca",
     icon: ShoppingCart,
     tone: "bg-orange-500 text-white",
   },
   {
     label: "Lojas e Empresas",
     description: "Negocios locais em destaque",
-    href: "#lojas-empresas",
+    href: "/lojas",
     icon: Store,
     tone: "bg-slate-900 text-white",
   },
@@ -145,13 +144,6 @@ const PRIMARY_CATEGORIES = [
   },
 ];
 
-function formatPrice(price?: string | null) {
-  if (!price) return "Sob consulta";
-  const value = Number(price);
-  if (Number.isNaN(value)) return "Sob consulta";
-  return `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
-}
-
 export default function Home() {
   const { isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
@@ -175,7 +167,6 @@ export default function Home() {
     limit: 6,
   });
 
-  const cityName = cities?.find(city => city.id === selectedCity)?.name;
   const topCategoryList = topCategories?.length ? topCategories : categories?.slice(0, 8);
   const featuredListings = featured ?? [];
   const recentListings = recent ?? [];
@@ -329,9 +320,9 @@ export default function Home() {
                 Atalhos rapidos para o que a cidade mais precisa.
               </p>
             </div>
-            <Link href="/busca?q=servicos">
+            <Link href="/guia">
               <Button variant="outline" className="rounded-2xl">
-                Ver todos os servicos
+                Abrir guia local
               </Button>
             </Link>
           </div>
@@ -377,7 +368,7 @@ export default function Home() {
                 Parceiros, negocios ativos e empresas com presenca no portal.
               </p>
             </div>
-            <Link href="/busca?q=lojas">
+            <Link href="/lojas">
               <Button variant="outline" className="rounded-2xl">
                 Buscar lojas
               </Button>
@@ -475,9 +466,9 @@ export default function Home() {
                 Produtos e servicos reais para o usuario ver logo de cara.
               </p>
             </div>
-            <Link href="/busca">
+            <Link href="/booster">
               <Button variant="outline" className="rounded-2xl">
-                Explorar marketplace
+                Ver pagina Booster
               </Button>
             </Link>
           </div>
@@ -706,10 +697,10 @@ export default function Home() {
             <Zap className="h-5 w-5" />
             Anunciar
           </Link>
-          <a href="#lojas-empresas" className="flex flex-col items-center gap-1 rounded-2xl px-2 py-2 text-xs font-medium text-slate-700">
+          <Link href="/lojas" className="flex flex-col items-center gap-1 rounded-2xl px-2 py-2 text-xs font-medium text-slate-700">
             <Store className="h-5 w-5" />
             Lojas
-          </a>
+          </Link>
           <Link href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE} className="flex flex-col items-center gap-1 rounded-2xl px-2 py-2 text-xs font-medium text-slate-700">
             <CircleUserRound className="h-5 w-5" />
             Perfil
