@@ -244,9 +244,9 @@ export default function Home() {
                           <div className="rounded-2xl bg-black/10 p-3">
                             <Icon className="h-5 w-5" />
                           </div>
-                          <div>
-                            <p className="font-semibold">{item.label}</p>
-                            <p className="text-sm opacity-80">
+                          <div className="min-w-0">
+                            <p className="font-semibold leading-tight">{item.label}</p>
+                            <p className="mt-1 text-sm leading-5 opacity-80">
                               {item.description}
                             </p>
                           </div>
@@ -344,22 +344,22 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
+          <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:pb-0 xl:grid-cols-3">
             {GUIDE_SHORTCUTS.map(item => {
               const Icon = item.icon;
               return (
                 <Link
                   key={item.title}
                   href={item.href}
-                  className="group rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-orange-200 hover:bg-orange-50/40 sm:rounded-[28px] sm:p-5"
+                  className="group min-w-[82%] snap-center rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-orange-200 hover:bg-orange-50/40 sm:min-w-0 sm:rounded-[28px]"
                 >
                   <div className={`inline-flex rounded-2xl p-3 ${item.tone}`}>
                     <Icon className="h-5 w-5" />
                   </div>
-                  <h3 className="mt-4 font-display text-xl font-bold text-slate-900 sm:text-2xl">
+                  <h3 className="mt-4 font-display text-2xl font-bold text-slate-900">
                     {item.title}
                   </h3>
-                  <p className="mt-2 text-xs leading-5 text-slate-500 sm:text-sm sm:leading-6">
+                  <p className="mt-2 text-sm leading-6 text-slate-500">
                     {item.description}
                   </p>
                   <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-orange-600">
@@ -394,7 +394,7 @@ export default function Home() {
 
           {companyHighlights.length > 0 ? (
             <>
-              <div className="flex gap-3 overflow-x-auto pb-2 md:hidden">
+              <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:hidden">
                 {companyHighlights.map(item => {
                   const displayName =
                     item.seller?.companyName?.trim() ||
@@ -409,7 +409,7 @@ export default function Home() {
                     <Link
                       key={item.id}
                       href={`/anuncio/${item.id}`}
-                      className="min-w-[150px] rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm"
+                      className="min-w-[84%] snap-center rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm"
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-slate-100 text-lg font-black text-blue-700">
@@ -537,11 +537,11 @@ export default function Home() {
           </div>
 
           {featuredListings.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+            <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 xl:grid xl:grid-cols-4 xl:overflow-visible xl:pb-0">
               {featuredListings.map(listing => (
                 <div
                   key={listing.id}
-                  className="overflow-hidden rounded-[28px] border border-amber-200 bg-white shadow-sm ring-1 ring-amber-100"
+                  className="min-w-[86%] snap-center overflow-hidden rounded-[28px] border border-amber-200 bg-white shadow-sm ring-1 ring-amber-100 sm:min-w-[360px] xl:min-w-0"
                 >
                   <div className="flex items-center justify-between bg-amber-50 px-4 py-3">
                     <div className="inline-flex items-center gap-1 rounded-full bg-amber-400 px-3 py-1 text-xs font-black text-white">
@@ -587,14 +587,14 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+          <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 xl:grid xl:grid-cols-4 xl:overflow-visible xl:pb-0">
             {PRIMARY_CATEGORIES.map(item => {
               const Icon = item.icon;
               return (
                 <Link
                   key={item.title}
                   href={`/busca?q=${encodeURIComponent(item.query)}`}
-                  className={`rounded-[24px] bg-gradient-to-br ${item.tone} p-5 text-white shadow-lg transition hover:-translate-y-0.5 sm:rounded-[28px] sm:p-6`}
+                  className={`min-w-[82%] snap-center rounded-[24px] bg-gradient-to-br ${item.tone} p-5 text-white shadow-lg transition hover:-translate-y-0.5 sm:min-w-[320px] sm:rounded-[28px] sm:p-6 xl:min-w-0`}
                 >
                   <div className="inline-flex rounded-2xl bg-white/15 p-3">
                     <Icon className="h-6 w-6" />
@@ -602,7 +602,7 @@ export default function Home() {
                   <h3 className="mt-6 font-display text-2xl font-black sm:mt-8 sm:text-3xl">
                     {item.title}
                   </h3>
-                  <p className="mt-2 text-xs text-white/85 sm:text-sm">
+                  <p className="mt-2 text-sm text-white/85">
                     Ver anuncios e servicos relacionados.
                   </p>
                 </Link>
@@ -645,13 +645,17 @@ export default function Home() {
             </div>
 
             {deliveryListings && deliveryListings.length > 0 ? (
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+              <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0 lg:grid-cols-6">
                 {deliveryListings.map(listing => (
-                  <ListingCard
+                  <div
                     key={listing.id}
-                    {...listing}
-                    cityName={cities?.find(city => city.id === listing.cityId)?.name}
-                  />
+                    className="min-w-[86%] snap-center sm:min-w-0"
+                  >
+                    <ListingCard
+                      {...listing}
+                      cityName={cities?.find(city => city.id === listing.cityId)?.name}
+                    />
+                  </div>
                 ))}
               </div>
             ) : (
