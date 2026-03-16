@@ -18,6 +18,7 @@ import {
   Home as HomeIcon,
   LayoutGrid,
   MapPin,
+  Phone,
   Search,
   Shield,
   ShoppingBag,
@@ -408,6 +409,13 @@ export default function Home() {
                     item.seller?.companyName?.trim() ||
                     item.seller?.name?.trim() ||
                     item.title;
+                  const cityName =
+                    cities?.find(city => city.id === item.cityId)?.name ||
+                    "Norte Pioneiro";
+                  const subtitle =
+                    categories?.find(category => category.id === item.categoryId)?.name ||
+                    item.subcategory ||
+                    "Negocio local";
                   const cover =
                     item.seller?.avatar ||
                     item.images?.find(image => image.isPrimary)?.url ||
@@ -417,10 +425,10 @@ export default function Home() {
                     <Link
                       key={item.id}
                       href={`/anuncio/${item.id}`}
-                      className="min-w-[84%] snap-center rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm"
+                      className="min-w-[86%] snap-center rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-slate-100 text-lg font-black text-blue-700">
+                      <div className="flex items-start gap-4">
+                        <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[22px] bg-slate-100 text-lg font-black text-blue-700">
                           {cover ? (
                             <img
                               src={cover}
@@ -431,14 +439,35 @@ export default function Home() {
                             displayName.charAt(0).toUpperCase()
                           )}
                         </div>
-                        <div className="min-w-0">
-                          <p className="truncate font-display text-xl font-bold text-slate-900">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-blue-700">
+                              <Store className="h-3.5 w-3.5" />
+                              {subtitle}
+                            </span>
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                              <BadgeCheck className="h-3.5 w-3.5" />
+                              Perfil ativo
+                            </span>
+                          </div>
+                          <p className="mt-3 truncate font-display text-2xl font-bold leading-tight text-slate-900">
                             {displayName}
                           </p>
-                          <p className="mt-1 truncate text-sm text-slate-500">
-                            {cities?.find(city => city.id === item.cityId)?.name ||
-                              "Norte Pioneiro"}
+                          <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">
+                            Veja produtos, servicos e formas de contato desta loja na sua regiao.
                           </p>
+                          <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-500">
+                            <span className="inline-flex items-center gap-1.5">
+                              <MapPin className="h-4 w-4 text-slate-400" />
+                              {cityName}
+                            </span>
+                            {item.whatsapp && (
+                              <span className="inline-flex items-center gap-1.5 text-emerald-700">
+                                <Phone className="h-4 w-4" />
+                                WhatsApp
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </Link>
@@ -456,6 +485,9 @@ export default function Home() {
                   item.seller?.companyName?.trim() ||
                   item.seller?.name?.trim() ||
                   item.title;
+                const cityName =
+                  cities?.find(city => city.id === item.cityId)?.name ||
+                  "Norte Pioneiro";
                 const subtitle =
                   categories?.find(category => category.id === item.categoryId)?.name ||
                   item.subcategory ||
@@ -483,6 +515,16 @@ export default function Home() {
                       </div>
                     </Link>
                     <div className="p-5">
+                      <div className="mb-3 flex flex-wrap items-center gap-2">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                          <Store className="h-3.5 w-3.5" />
+                          {subtitle}
+                        </span>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                          <BadgeCheck className="h-3.5 w-3.5" />
+                          Perfil ativo
+                        </span>
+                      </div>
                       <div className="flex items-center gap-3">
                         <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-slate-100 text-lg font-black text-blue-700">
                           {item.seller?.avatar ? (
@@ -504,10 +546,25 @@ export default function Home() {
                           </p>
                         </div>
                       </div>
-                      <p className="mt-4 text-sm text-slate-500">
-                        {cities?.find(city => city.id === item.cityId)?.name ||
-                          "Norte Pioneiro"}
+                      <p className="mt-4 line-clamp-2 text-sm leading-6 text-slate-500">
+                        Conheca a loja, veja os itens publicados e encontre os canais de contato disponiveis.
                       </p>
+                      <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-500">
+                        <span className="inline-flex items-center gap-1.5">
+                          <MapPin className="h-4 w-4 text-slate-400" />
+                          {cityName}
+                        </span>
+                        {item.whatsapp && (
+                          <span className="inline-flex items-center gap-1.5 text-emerald-700">
+                            <Phone className="h-4 w-4" />
+                            WhatsApp disponivel
+                          </span>
+                        )}
+                      </div>
+                      <div className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-orange-600">
+                        Ver perfil
+                        <ArrowRight className="h-4 w-4" />
+                      </div>
                     </div>
                   </article>
                 );
