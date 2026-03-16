@@ -14,9 +14,11 @@ import {
   Briefcase,
   Building2,
   Car,
+  ChevronRight,
   HeartHandshake,
   Home as HomeIcon,
   LayoutGrid,
+  LogIn,
   MapPin,
   Menu,
   MessageCircle,
@@ -26,6 +28,7 @@ import {
   ShoppingCart,
   Store,
   Stethoscope,
+  Wallet,
   Wrench,
   Zap,
 } from "lucide-react";
@@ -214,6 +217,39 @@ export default function Home() {
   const handleSearch = (query: string) => {
     navigate(`/busca?q=${encodeURIComponent(query)}&city=${selectedCity || ""}`);
   };
+
+  const mobileMenuItems = [
+    {
+      label: isAuthenticated ? "Meu perfil" : "Entrar",
+      href: isAuthenticated ? "/anunciante" : LOGIN_ROUTE,
+      icon: isAuthenticated ? Store : LogIn,
+    },
+    {
+      label: "Chat",
+      href: isAuthenticated ? "/anunciante" : LOGIN_ROUTE,
+      icon: MessageCircle,
+    },
+    {
+      label: "Meus anuncios",
+      href: isAuthenticated ? "/anunciante" : LOGIN_ROUTE,
+      icon: LayoutGrid,
+    },
+    {
+      label: "Minhas vendas",
+      href: isAuthenticated ? "/anunciante" : LOGIN_ROUTE,
+      icon: ShoppingBag,
+    },
+    {
+      label: "Plano profissional",
+      href: "/planos",
+      icon: BadgeCheck,
+    },
+    {
+      label: "Minhas compras",
+      href: isAuthenticated ? "/favoritos" : LOGIN_ROUTE,
+      icon: Wallet,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#fff8ef_0%,#f8fafc_32%,#f8fafc_100%)]">
@@ -853,43 +889,30 @@ export default function Home() {
               mobileMenuOpen ? "text-orange-500" : "text-slate-700"
             }`}
           >
-            <Menu className="h-5 w-5" />
+            {mobileMenuOpen ? <LayoutGrid className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             Menu
           </button>
         </div>
       </nav>
 
       {mobileMenuOpen && (
-        <div className="fixed inset-x-4 bottom-24 z-40 rounded-[28px] border border-slate-200 bg-white p-4 shadow-[0_20px_60px_rgba(15,23,42,0.18)] md:hidden">
-          <div className="grid grid-cols-2 gap-3">
-            <Link
-              href="/guia"
-              onClick={() => setMobileMenuOpen(false)}
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700"
-            >
-              Guia Local
-            </Link>
-            <Link
-              href="/lojas"
-              onClick={() => setMobileMenuOpen(false)}
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700"
-            >
-              Lojas
-            </Link>
-            <Link
-              href="/favoritos"
-              onClick={() => setMobileMenuOpen(false)}
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700"
-            >
-              Favoritos
-            </Link>
-            <Link
-              href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE}
-              onClick={() => setMobileMenuOpen(false)}
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700"
-            >
-              Perfil
-            </Link>
+        <div className="fixed inset-x-0 bottom-[72px] top-auto z-40 max-h-[70vh] overflow-y-auto border-t border-slate-200 bg-white shadow-[0_-18px_60px_rgba(15,23,42,0.16)] md:hidden">
+          <div className="divide-y divide-slate-100">
+            {mobileMenuItems.map(item => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-5 py-4 text-sm font-medium text-slate-800"
+                >
+                  <Icon className="h-5 w-5 text-slate-600" />
+                  <span className="flex-1">{item.label}</span>
+                  <ChevronRight className="h-4 w-4 text-slate-400" />
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}
