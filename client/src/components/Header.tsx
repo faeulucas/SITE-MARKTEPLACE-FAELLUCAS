@@ -230,94 +230,76 @@ export default function Header({
         </div>
 
         <div className="space-y-3 py-3 xl:hidden">
-          <div className="flex items-center gap-2">
-            <Link href="/" className="flex min-w-0 items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-gradient shadow-md">
-                <Zap className="h-5 w-5 text-white" />
-              </div>
-              <div className="min-w-0">
-                <p className="font-display text-lg font-black leading-none text-gray-900">
-                  Norte
-                  <span style={{ color: "oklch(0.68 0.19 45)" }}>Vivo</span>
-                </p>
-                <p className="text-[11px] font-medium text-gray-500">Guia, lojas e marketplace</p>
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl">
+              <div className="font-display text-3xl font-black tracking-tight">
+                <span className="text-violet-600">o</span>
+                <span className="text-indigo-500">l</span>
+                <span className="text-amber-500">x</span>
               </div>
             </Link>
 
-            <div className="ml-auto flex items-center gap-2">
-              <Select
-                value={selectedCity ? String(selectedCity) : "all"}
-                onValueChange={value =>
-                  onCityChange?.(value === "all" ? null : Number(value))
-                }
-              >
-                <SelectTrigger className="h-10 max-w-[150px] rounded-2xl border-slate-200 bg-slate-50 px-3 text-xs font-semibold text-slate-700 shadow-none">
-                  <MapPin className="mr-1 h-4 w-4 text-blue-600" />
-                  <SelectValue placeholder="Cidade" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas as cidades</SelectItem>
-                  {cities?.map(city => (
-                    <SelectItem key={city.id} value={String(city.id)}>
-                      {city.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <form onSubmit={handleSearch} className="min-w-0 flex-1">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQ}
+                  onChange={e => setSearchQ(e.target.value)}
+                  placeholder='Buscar "Carro"'
+                  className="h-12 w-full rounded-2xl border border-slate-200 bg-white py-3 pl-4 pr-12 text-sm text-slate-700 outline-none"
+                />
+                <button
+                  type="submit"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-700"
+                >
+                  <Search className="h-5 w-5" />
+                </button>
+              </div>
+            </form>
 
-              <button
-                type="button"
-                onClick={() => navigate(isAuthenticated ? "/anunciante" : LOGIN_ROUTE)}
-                className="relative flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-700"
-              >
-                <Bell className="h-4 w-4" />
-                <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-orange-500" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setMobileOpen(current => !current)}
-                className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-700"
-              >
-                {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => navigate(isAuthenticated ? "/anunciante" : LOGIN_ROUTE)}
+              className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-slate-700"
+            >
+              <Bell className="h-5 w-5" />
+              <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-orange-500" />
+            </button>
           </div>
 
-          <form onSubmit={handleSearch}>
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                value={searchQ}
-                onChange={e => setSearchQ(e.target.value)}
-                placeholder="Buscar produtos, servicos..."
-                className="h-12 w-full rounded-[20px] border border-slate-200 bg-slate-50 py-3 pl-11 pr-24 text-sm text-slate-700 outline-none"
-              />
-              <button
-                type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-2xl bg-brand-gradient px-4 py-2 text-xs font-semibold text-white"
-              >
-                Buscar
-              </button>
-            </div>
-          </form>
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <Select
+              value={selectedCity ? String(selectedCity) : "all"}
+              onValueChange={value =>
+                onCityChange?.(value === "all" ? null : Number(value))
+              }
+            >
+              <SelectTrigger className="h-auto max-w-[180px] border-0 bg-transparent px-0 text-sm font-medium text-slate-700 shadow-none focus:ring-0">
+                <MapPin className="mr-1 h-4 w-4 text-slate-500" />
+                <SelectValue placeholder="Parana" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas as cidades</SelectItem>
+                {cities?.map(city => (
+                  <SelectItem key={city.id} value={String(city.id)}>
+                    {city.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            {HEADER_SHORTCUTS.map(item => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="whitespace-nowrap rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
-              >
-                {item.label}
-              </Link>
-            ))}
+            <button
+              type="button"
+              onClick={() => setMobileOpen(current => !current)}
+              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-700"
+            >
+              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="hidden border-t border-slate-100 bg-white sm:block">
+      <div className="border-t border-slate-100 bg-white">
         <div className="container">
           <div className="flex items-center gap-2 overflow-x-auto py-3">
             {HEADER_PILLS.map(item => {
