@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { LOGIN_ROUTE } from "@/const";
@@ -21,6 +21,10 @@ export default function MobileBottomNav() {
   const { isAuthenticated } = useAuth();
   const [location] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location]);
 
   const menuItems = [
     {
@@ -62,7 +66,7 @@ export default function MobileBottomNav() {
           <Link
             href="/"
             className={`flex flex-col items-center gap-1 px-2 py-1 text-xs font-medium ${
-              location === "/" ? "text-orange-500" : "text-slate-700"
+              !menuOpen && location === "/" ? "text-orange-500" : "text-slate-700"
             }`}
           >
             <Home className="h-5 w-5" />
@@ -71,7 +75,9 @@ export default function MobileBottomNav() {
           <Link
             href="/busca"
             className={`flex flex-col items-center gap-1 px-2 py-1 text-xs font-medium ${
-              location.startsWith("/busca") ? "text-orange-500" : "text-slate-700"
+              !menuOpen && location.startsWith("/busca")
+                ? "text-orange-500"
+                : "text-slate-700"
             }`}
           >
             <Search className="h-5 w-5" />
@@ -80,7 +86,8 @@ export default function MobileBottomNav() {
           <Link
             href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE}
             className={`flex flex-col items-center gap-1 px-2 py-1 text-xs font-medium ${
-              location.startsWith("/anunciante/novo") || location.startsWith("/anunciar")
+              !menuOpen &&
+              (location.startsWith("/anunciante/novo") || location.startsWith("/anunciar"))
                 ? "text-orange-500"
                 : "text-slate-700"
             }`}
@@ -91,7 +98,8 @@ export default function MobileBottomNav() {
           <Link
             href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE}
             className={`flex flex-col items-center gap-1 px-2 py-1 text-xs font-medium ${
-              location.startsWith("/anunciante") || location.startsWith("/entrar")
+              !menuOpen &&
+              (location.startsWith("/anunciante") || location.startsWith("/entrar"))
                 ? "text-orange-500"
                 : "text-slate-700"
             }`}
@@ -112,8 +120,19 @@ export default function MobileBottomNav() {
         </div>
       </nav>
 
-      {menuOpen && (
-        <div className="fixed inset-x-0 bottom-[72px] top-auto z-40 max-h-[70vh] overflow-y-auto border-t border-slate-200 bg-white shadow-[0_-18px_60px_rgba(15,23,42,0.16)] md:hidden">
+      <div
+        className={`fixed inset-x-0 bottom-[72px] top-0 z-40 overflow-hidden bg-white md:hidden ${
+          menuOpen ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+      >
+        <div
+          className={`h-full overflow-y-auto border-t border-slate-200 shadow-[0_-18px_60px_rgba(15,23,42,0.16)] transition-all duration-200 ease-out ${
+            menuOpen
+              ? "translate-y-0 opacity-100"
+              : "translate-y-4 opacity-0"
+          }`}
+          style={{ transformOrigin: "bottom right" }}
+        >
           <div className="divide-y divide-slate-100">
             {menuItems.map(item => {
               const Icon = item.icon;
@@ -132,7 +151,7 @@ export default function MobileBottomNav() {
             })}
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }
