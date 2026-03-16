@@ -1183,6 +1183,7 @@ export const appRouter = router({
             name: users.name,
             personType: users.personType,
             companyName: users.companyName,
+            phone: users.phone,
             avatar: users.avatar,
             bannerUrl: users.bannerUrl,
             whatsapp: users.whatsapp,

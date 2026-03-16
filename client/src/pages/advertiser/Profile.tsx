@@ -29,11 +29,8 @@ export default function AdvertiserProfile() {
   const [neighborhood, setNeighborhood] = useState("");
   const [bio, setBio] = useState("");
   const [avatarUploading, setAvatarUploading] = useState(false);
-  const [bannerUploading, setBannerUploading] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [bannerPreview, setBannerPreview] = useState<string | null>(null);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
-  const bannerInputRef = useRef<HTMLInputElement | null>(null);
   const utils = trpc.useUtils();
   const { data: cities } = trpc.public.cities.useQuery();
 
@@ -48,7 +45,6 @@ export default function AdvertiserProfile() {
     setNeighborhood(user.neighborhood ?? "");
     setBio(user.bio ?? "");
     setAvatarPreview(user.avatar ?? null);
-    setBannerPreview(user.bannerUrl ?? null);
   }, [user]);
 
   const updateProfileMutation = trpc.auth.updateProfile.useMutation({
@@ -89,26 +85,6 @@ export default function AdvertiserProfile() {
     },
   });
 
-  const uploadBannerMutation = trpc.auth.uploadBanner.useMutation({
-    onSuccess: async ({ url }) => {
-      setBannerPreview(url);
-      utils.auth.me.setData(undefined, currentUser =>
-        currentUser ? { ...currentUser, bannerUrl: url } : currentUser
-      );
-      await Promise.all([
-        utils.public.featuredListings.invalidate(),
-        utils.public.recentListings.invalidate(),
-        utils.public.listingById.invalidate(),
-        user?.id
-          ? utils.public.sellerProfile.invalidate({ sellerId: user.id })
-          : Promise.resolve(),
-      ]);
-      toast.success("Banner da loja atualizado.");
-    },
-    onError: error => {
-      toast.error(error.message);
-    },
-  });
 
   if (loading) {
     return (
@@ -167,29 +143,6 @@ export default function AdvertiserProfile() {
         });
       } finally {
         setAvatarUploading(false);
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleBannerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    event.target.value = "";
-
-    const reader = new FileReader();
-    reader.onload = async readerEvent => {
-      const result = readerEvent.target?.result;
-      if (typeof result !== "string") return;
-
-      setBannerUploading(true);
-      try {
-        await uploadBannerMutation.mutateAsync({
-          base64: result,
-          mimeType: file.type || "image/jpeg",
-        });
-      } finally {
-        setBannerUploading(false);
       }
     };
     reader.readAsDataURL(file);
@@ -271,51 +224,6 @@ export default function AdvertiserProfile() {
                   ? "Enviando..."
                   : "Escolher foto"}
               </Button>
-            </div>
-          </div>
-
-          <div className="mb-6 overflow-hidden rounded-[24px] border border-gray-100 bg-white">
-            <div className="relative h-44 bg-gray-100 sm:h-52">
-              {bannerPreview ? (
-                <img
-                  src={bannerPreview}
-                  alt={displayName || "Banner da loja"}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="h-full w-full bg-hero-gradient" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-slate-900/10 to-transparent" />
-            </div>
-            <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-              <div>
-                <p className="font-semibold text-gray-900">Banner da vitrine</p>
-                <p className="mt-1 text-sm text-gray-500">
-                  Use foto da fachada, interior da loja ou uma arte da marca.
-                  Esse banner aparece no topo da sua vitrine publica.
-                </p>
-              </div>
-              <input
-                ref={bannerInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleBannerChange}
-              />
-              <div className="w-full sm:w-auto">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full rounded-2xl sm:w-auto"
-                  disabled={bannerUploading || uploadBannerMutation.isPending}
-                  onClick={() => bannerInputRef.current?.click()}
-                >
-                  <Camera className="mr-2 h-4 w-4" />
-                  {bannerUploading || uploadBannerMutation.isPending
-                    ? "Enviando..."
-                    : "Escolher banner"}
-                </Button>
-              </div>
             </div>
           </div>
 

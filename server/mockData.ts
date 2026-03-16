@@ -406,6 +406,7 @@ export function getMockSellerProfile(sellerId: number) {
       name: seller.name,
       personType: seller.personType,
       companyName: seller.companyName,
+      phone: seller.phone,
       avatar: seller.avatar,
       bannerUrl: seller.bannerUrl,
       whatsapp: seller.whatsapp,

@@ -362,8 +362,6 @@ export default function Home() {
                   ?.name ||
                 item.subcategory ||
                 "Negocio local";
-              const storefrontSellerId = item.seller?.id ?? item.userId;
-              const storefrontHref = `/loja/${storefrontSellerId}`;
               const whatsappHref = item.whatsapp
                 ? `https://wa.me/55${item.whatsapp.replace(/\D/g, "")}`
                 : null;
@@ -373,7 +371,7 @@ export default function Home() {
                   key={item.id}
                   className="overflow-hidden rounded-[24px] border border-gray-100 bg-white shadow-sm"
                 >
-                  <Link href={storefrontHref} className="block">
+                  <Link href={`/anuncio/${item.id}`} className="block">
                     <div className="relative h-36 overflow-hidden bg-gray-100">
                       {cover ? (
                         <img
@@ -421,12 +419,12 @@ export default function Home() {
                     </div>
 
                     <div className="mt-4 flex items-center justify-center gap-2">
-                      <Link href={storefrontHref}>
+                      <Link href={`/anuncio/${item.id}`}>
                         <Button
                           size="sm"
                           className="rounded-xl bg-brand-gradient text-white hover:opacity-90"
                         >
-                          Ver vitrine
+                          Ver anuncio
                         </Button>
                       </Link>
                       {whatsappHref && (
@@ -457,12 +455,12 @@ export default function Home() {
               Sua empresa pode aparecer aqui
             </h3>
             <p className="mt-2 text-sm text-gray-500">
-              Crie sua vitrine digital, publique seus produtos e entre para os
+              Publique seus produtos, divulgue sua empresa e entre para os
               destaques do portal local.
             </p>
             <Link href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE}>
               <Button className="mt-5 rounded-2xl bg-orange-gradient text-white hover:opacity-90">
-                Criar minha vitrine
+                Publicar agora
               </Button>
             </Link>
           </div>
