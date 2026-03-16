@@ -382,6 +382,9 @@ export function attachMockSellerPreviewToListings<T extends { userId: number }>(
             companyName: seller.companyName,
             avatar: seller.avatar,
             bannerUrl: seller.bannerUrl,
+            whatsapp: seller.whatsapp,
+            cityId: seller.cityId,
+            neighborhood: seller.neighborhood,
             isVerified: seller.isVerified,
           }
         : null,

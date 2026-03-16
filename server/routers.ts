@@ -87,6 +87,9 @@ async function attachSellerPreviewToListings<T extends { userId: number }>(
       companyName: users.companyName,
       avatar: users.avatar,
       bannerUrl: users.bannerUrl,
+      whatsapp: users.whatsapp,
+      cityId: users.cityId,
+      neighborhood: users.neighborhood,
       isVerified: users.isVerified,
     })
     .from(users)

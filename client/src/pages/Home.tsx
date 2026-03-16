@@ -45,6 +45,10 @@ type HomeHighlightListing = {
     companyName?: string | null;
     avatar?: string | null;
     bannerUrl?: string | null;
+    whatsapp?: string | null;
+    cityId?: number | null;
+    neighborhood?: string | null;
+    isVerified?: boolean | null;
   } | null;
 };
 
@@ -410,16 +414,14 @@ export default function Home() {
                     item.seller?.name?.trim() ||
                     item.title;
                   const cityName =
-                    cities?.find(city => city.id === item.cityId)?.name ||
+                    cities?.find(city => city.id === item.seller?.cityId)?.name ||
                     "Norte Pioneiro";
+                  const neighborhood = item.seller?.neighborhood?.trim();
                   const subtitle =
                     categories?.find(category => category.id === item.categoryId)?.name ||
                     item.subcategory ||
                     "Negocio local";
-                  const cover =
-                    item.seller?.avatar ||
-                    item.images?.find(image => image.isPrimary)?.url ||
-                    item.images?.[0]?.url;
+                  const profileImage = item.seller?.avatar;
 
                   return (
                     <Link
@@ -427,11 +429,11 @@ export default function Home() {
                       href={`/anuncio/${item.id}`}
                       className="min-w-[86%] snap-center rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm"
                     >
-                      <div className="flex items-start gap-4">
-                        <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[22px] bg-slate-100 text-lg font-black text-blue-700">
-                          {cover ? (
+                      <div>
+                        <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-[22px] bg-slate-100 text-lg font-black text-blue-700">
+                          {profileImage ? (
                             <img
-                              src={cover}
+                              src={profileImage}
                               alt={displayName}
                               className="h-full w-full object-cover"
                             />
@@ -439,29 +441,29 @@ export default function Home() {
                             displayName.charAt(0).toUpperCase()
                           )}
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
+                        <div className="mt-4">
+                          <p className="truncate font-display text-2xl font-bold leading-tight text-slate-900">
+                            {displayName}
+                          </p>
+                          <div className="mt-3 flex flex-wrap items-center gap-2">
                             <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-blue-700">
                               <Store className="h-3.5 w-3.5" />
                               {subtitle}
                             </span>
                             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
                               <BadgeCheck className="h-3.5 w-3.5" />
-                              Perfil ativo
+                              {item.seller?.isVerified ? "Verificada" : "Perfil ativo"}
                             </span>
                           </div>
-                          <p className="mt-3 truncate font-display text-2xl font-bold leading-tight text-slate-900">
-                            {displayName}
-                          </p>
-                          <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">
-                            Veja produtos, servicos e formas de contato desta loja na sua regiao.
+                          <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-500">
+                            Conheca a loja, veja seus anuncios e encontre formas rapidas de contato.
                           </p>
                           <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-500">
                             <span className="inline-flex items-center gap-1.5">
                               <MapPin className="h-4 w-4 text-slate-400" />
-                              {cityName}
+                              {[neighborhood, cityName].filter(Boolean).join(", ")}
                             </span>
-                            {item.whatsapp && (
+                            {(item.seller?.whatsapp || item.whatsapp) && (
                               <span className="inline-flex items-center gap-1.5 text-emerald-700">
                                 <Phone className="h-4 w-4" />
                                 WhatsApp
@@ -486,8 +488,9 @@ export default function Home() {
                   item.seller?.name?.trim() ||
                   item.title;
                 const cityName =
-                  cities?.find(city => city.id === item.cityId)?.name ||
+                  cities?.find(city => city.id === item.seller?.cityId)?.name ||
                   "Norte Pioneiro";
+                const neighborhood = item.seller?.neighborhood?.trim();
                 const subtitle =
                   categories?.find(category => category.id === item.categoryId)?.name ||
                   item.subcategory ||
@@ -522,7 +525,7 @@ export default function Home() {
                         </span>
                         <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
                           <BadgeCheck className="h-3.5 w-3.5" />
-                          Perfil ativo
+                          {item.seller?.isVerified ? "Verificada" : "Perfil ativo"}
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
@@ -552,9 +555,9 @@ export default function Home() {
                       <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-500">
                         <span className="inline-flex items-center gap-1.5">
                           <MapPin className="h-4 w-4 text-slate-400" />
-                          {cityName}
+                          {[neighborhood, cityName].filter(Boolean).join(", ")}
                         </span>
-                        {item.whatsapp && (
+                        {(item.seller?.whatsapp || item.whatsapp) && (
                           <span className="inline-flex items-center gap-1.5 text-emerald-700">
                             <Phone className="h-4 w-4" />
                             WhatsApp disponivel
