@@ -53,7 +53,11 @@ type DashboardCard = {
   status?: "ok" | "default";
 };
 
-function buildSections(isAdvertiser: boolean, isStoreOwner: boolean): MainSection[] {
+function buildSections(
+  isAdvertiser: boolean,
+  isStoreOwner: boolean,
+  storefrontHref: string
+): MainSection[] {
   return [
     {
       key: "conta",
@@ -96,7 +100,7 @@ function buildSections(isAdvertiser: boolean, isStoreOwner: boolean): MainSectio
             key: "lojas",
             label: "Minhas Lojas",
             children: [
-              { key: "vitrine", label: "Minha Vitrine", href: "/lojas" },
+              { key: "vitrine", label: "Minha Vitrine", href: storefrontHref },
               { key: "produtos-loja", label: "Produtos da Loja", href: "/painel-anunciante" },
               { key: "pedidos-loja", label: "Pedidos da Loja" },
               { key: "config-loja", label: "Configuracoes da Loja", href: "/anunciante/meus-dados" },
@@ -128,7 +132,8 @@ function buildSections(isAdvertiser: boolean, isStoreOwner: boolean): MainSectio
 function buildCards(
   isAdvertiser: boolean,
   isStoreOwner: boolean,
-  planActive: boolean
+  planActive: boolean,
+  storefrontHref: string
 ): DashboardCard[] {
   const cards: DashboardCard[] = [
     {
@@ -196,7 +201,7 @@ function buildCards(
       title: "Minha Loja",
       description: "Gerencie sua vitrine e produtos.",
       icon: Store,
-      href: "/anunciante/meus-dados",
+      href: storefrontHref,
       visible: isStoreOwner,
     },
     {
@@ -269,8 +274,14 @@ export default function MyAccountPanel() {
         ? "Ambos"
         : "Anunciante PF"
       : "Comprador";
-  const sections = buildSections(isAdvertiser, isStoreOwner);
-  const cards = buildCards(isAdvertiser, isStoreOwner, Boolean(user.trialStartedAt));
+  const storefrontHref = isStoreOwner && user.id ? `/loja/${user.id}` : "/lojas";
+  const sections = buildSections(isAdvertiser, isStoreOwner, storefrontHref);
+  const cards = buildCards(
+    isAdvertiser,
+    isStoreOwner,
+    Boolean(user.trialStartedAt),
+    storefrontHref
+  );
   const currentSection = sections.find(section => section.key === activeSection) ?? sections[0];
   const displayName = user.personType === "pj" ? user.companyName || user.name : user.name;
   const avatarSrc = typeof user.avatar === "string" ? user.avatar : undefined;

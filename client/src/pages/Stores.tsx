@@ -1,6 +1,7 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
+import { getStorefrontHref } from "@/lib/storefront";
 import { trpc } from "@/lib/trpc";
 import { Building2, MapPin, MessageCircle, Search, Store } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -135,6 +136,7 @@ export default function StoresPage() {
                   categories?.find(category => category.id === item.categoryId)?.name ||
                   item.subcategory ||
                   "Negocio local";
+                const storefrontHref = getStorefrontHref(item.seller?.id, item.id);
                 const whatsappHref = item.whatsapp
                   ? `https://wa.me/55${item.whatsapp.replace(/\D/g, "")}`
                   : null;
@@ -144,7 +146,7 @@ export default function StoresPage() {
                     key={item.id}
                     className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm"
                   >
-                    <Link href={`/anuncio/${item.id}`} className="block">
+                    <Link href={storefrontHref} className="block">
                       <div className="relative h-44 bg-slate-100">
                         {cover ? (
                           <img
@@ -193,10 +195,10 @@ export default function StoresPage() {
                       </div>
 
                       <div className="mt-5 flex gap-2">
-                        <Link href={`/anuncio/${item.id}`} className="flex-1">
+                        <Link href={storefrontHref} className="flex-1">
                           <Button className="w-full rounded-2xl bg-slate-900 text-white hover:bg-slate-800">
                             <Store className="mr-2 h-4 w-4" />
-                            Ver anuncio
+                            Ver loja
                           </Button>
                         </Link>
                         {whatsappHref && (

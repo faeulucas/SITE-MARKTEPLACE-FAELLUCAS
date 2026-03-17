@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ListingCard from "@/components/ListingCard";
 import { Button } from "@/components/ui/button";
+import { getStorefrontHref } from "@/lib/storefront";
 import {
   Ambulance,
   ArrowRight,
@@ -604,7 +605,7 @@ export default function Home() {
                   return (
                     <Link
                       key={item.id}
-                      href={`/anuncio/${item.id}`}
+                      href={getStorefrontHref(item.seller?.id, item.id)}
                       className="min-w-[86%] snap-center rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm"
                     >
                       <div>
@@ -678,7 +679,10 @@ export default function Home() {
                     key={item.id}
                     className="min-w-[280px] max-w-[320px] flex-1 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm"
                   >
-                    <Link href={`/anuncio/${item.id}`} className="block">
+                    <Link
+                      href={getStorefrontHref(item.seller?.id, item.id)}
+                      className="block"
+                    >
                       <div className="relative h-40 bg-slate-100">
                         {cover ? (
                           <img

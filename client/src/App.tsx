@@ -27,6 +27,7 @@ import GuidePage from "./pages/Guide";
 import StoresPage from "./pages/Stores";
 import BoosterPage from "./pages/Booster";
 import MyAccountPanel from "./pages/account/MyAccountPanel";
+import StorefrontPage from "./pages/Storefront";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -49,6 +50,7 @@ function Router() {
       <Route path="/busca" component={SearchPage} />
       <Route path="/guia" component={GuidePage} />
       <Route path="/lojas" component={StoresPage} />
+      <Route path="/loja/:sellerId" component={StorefrontPage} />
       <Route path="/booster" component={BoosterPage} />
       <Route path="/minha-conta" component={MyAccountPanel} />
       <Route path="/anuncio/:id" component={ListingDetailPage} />

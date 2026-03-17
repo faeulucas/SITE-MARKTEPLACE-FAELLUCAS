@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { getStorefrontHref } from "@/lib/storefront";
 import { useAuth } from "@/_core/hooks/useAuth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -115,6 +116,19 @@ export default function ListingDetailPage() {
     );
   }, [listing, priceAlertKey, sellerStorageKey]);
 
+  const topSellerItems = useMemo(
+    () =>
+      [...(sellerListings ?? [])]
+        .sort(
+          (a, b) =>
+            Number(b.viewCount ?? 0) +
+            Number(b.favoriteCount ?? 0) -
+            (Number(a.viewCount ?? 0) + Number(a.favoriteCount ?? 0))
+        )
+        .slice(0, 3),
+    [sellerListings]
+  );
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -173,6 +187,7 @@ export default function ListingDetailPage() {
     .join(", ");
   const phoneDigits = listing.whatsapp?.replace(/\D/g, "") ?? "";
   const callUrl = phoneDigits ? `tel:${phoneDigits}` : null;
+  const storefrontHref = getStorefrontHref(listing.seller?.id, listing.id);
   const sellerMemberYear = listing.seller?.createdAt
     ? new Date(listing.seller.createdAt).getFullYear()
     : null;
@@ -184,19 +199,6 @@ export default function ListingDetailPage() {
   const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(
     `${shareText}\n${shareUrl}`
   )}`;
-
-  const topSellerItems = useMemo(
-    () =>
-      [...(sellerListings ?? [])]
-        .sort(
-          (a, b) =>
-            Number(b.viewCount ?? 0) +
-            Number(b.favoriteCount ?? 0) -
-            (Number(a.viewCount ?? 0) + Number(a.favoriteCount ?? 0))
-        )
-        .slice(0, 3),
-    [sellerListings]
-  );
 
   const scrollToSection = (section: "sobre" | "produto" | "avaliacoes") => {
     setActiveSection(section);
@@ -320,6 +322,11 @@ export default function ListingDetailPage() {
                   )}
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2 text-sm">
+                  <Link href={storefrontHref}>
+                    <span className="rounded-full bg-orange-50 px-3 py-1 font-medium text-orange-700 transition hover:bg-orange-100">
+                      Ver vitrine da loja
+                    </span>
+                  </Link>
                   <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700">
                     {listing.title}
                   </span>
