@@ -12,7 +12,9 @@ import {
   ArrowRight,
   BadgeCheck,
   Briefcase,
+  BriefcaseBusiness,
   Building2,
+  CalendarDays,
   Car,
   HeartHandshake,
   Home as HomeIcon,
@@ -215,6 +217,40 @@ function isFoodListing(item: HomeHighlightListing) {
   );
 }
 
+function isJobListing(item: HomeHighlightListing, categoryName?: string) {
+  const haystack = [item.title, item.subcategory, categoryName]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return (
+    item.type === "job" ||
+    haystack.includes("vaga") ||
+    haystack.includes("emprego") ||
+    haystack.includes("contrata") ||
+    haystack.includes("freela") ||
+    haystack.includes("diarista") ||
+    haystack.includes("estagio")
+  );
+}
+
+function isEventListing(item: HomeHighlightListing, categoryName?: string) {
+  const haystack = [item.title, item.subcategory, categoryName]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return (
+    haystack.includes("evento") ||
+    haystack.includes("show") ||
+    haystack.includes("feira") ||
+    haystack.includes("festival") ||
+    haystack.includes("rodeio") ||
+    haystack.includes("festa") ||
+    haystack.includes("encontro")
+  );
+}
+
 function formatListingPrice(price?: string | null, priceType?: string | null) {
   if (!price || priceType === "free") return "Gratis";
   if (priceType === "on_request") return "Sob consulta";
@@ -332,6 +368,28 @@ export default function Home() {
       .filter(item => isFoodListing(item) && item.seller?.isOpenNow)
       .slice(0, 6);
   }, [deliveryListings]);
+
+  const jobListings = useMemo(() => {
+    return recentListings
+      .filter(item =>
+        isJobListing(
+          item as HomeHighlightListing,
+          categories?.find(category => category.id === item.categoryId)?.name
+        )
+      )
+      .slice(0, 4);
+  }, [categories, recentListings]);
+
+  const eventListings = useMemo(() => {
+    return recentListings
+      .filter(item =>
+        isEventListing(
+          item as HomeHighlightListing,
+          categories?.find(category => category.id === item.categoryId)?.name
+        )
+      )
+      .slice(0, 4);
+  }, [categories, recentListings]);
 
   const handleSearch = (query: string) => {
     navigate(`/busca?q=${encodeURIComponent(query)}&city=${selectedCity || ""}`);
@@ -1149,6 +1207,148 @@ export default function Home() {
         </section>
 
         <section className="container pb-14">
+          <div className="mb-6 grid gap-4 lg:grid-cols-2">
+            <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+              <div className="flex items-start gap-3">
+                <div className="rounded-2xl bg-blue-50 p-3 text-blue-700">
+                  <CalendarDays className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">
+                    Eventos da regiao
+                  </p>
+                  <h2 className="mt-2 font-display text-2xl font-black text-slate-900">
+                    O que vai acontecer perto de voce
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-slate-500">
+                    Feiras, shows, encontros e novidades para movimentar sua cidade.
+                  </p>
+                </div>
+              </div>
+
+              {eventListings.length > 0 ? (
+                <div className="mt-5 space-y-3">
+                  {eventListings.map(item => (
+                    (() => {
+                      const media = item as HomeHighlightListing & {
+                        images?: { url: string; isPrimary?: boolean | null }[];
+                      };
+                      const image =
+                        media.images?.find(image => image.isPrimary)?.url ||
+                        media.images?.[0]?.url;
+
+                      return (
+                        <Link
+                          key={item.id}
+                          href={`/anuncio/${item.id}`}
+                          className="flex items-center gap-3 rounded-[22px] border border-slate-200 bg-slate-50 p-3 transition hover:border-blue-200 hover:bg-blue-50/50"
+                        >
+                          <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-slate-100">
+                            {image ? (
+                          <img
+                            src={image}
+                            alt={item.title}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <CalendarDays className="h-6 w-6 text-slate-400" />
+                        )}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate font-display text-lg font-bold text-slate-900">
+                              {item.title}
+                            </p>
+                            <p className="mt-1 truncate text-sm text-slate-500">
+                              {[item.neighborhood, cities?.find(city => city.id === item.cityId)?.name]
+                                .filter(Boolean)
+                                .join(", ") || "Norte Pioneiro"}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })()
+                  ))}
+                </div>
+              ) : (
+                <div className="mt-5 rounded-[22px] border border-dashed border-slate-200 bg-slate-50 p-5">
+                  <p className="text-sm leading-6 text-slate-500">
+                    Ainda nao ha eventos publicados. Use o Norte Vivo para divulgar a proxima atracao da sua regiao.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+              <div className="flex items-start gap-3">
+                <div className="rounded-2xl bg-emerald-50 p-3 text-emerald-700">
+                  <BriefcaseBusiness className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-600">
+                    Vagas de emprego
+                  </p>
+                  <h2 className="mt-2 font-display text-2xl font-black text-slate-900">
+                    Oportunidades para trabalhar perto de casa
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-slate-500">
+                    Vagas locais, trabalhos rapidos e chances reais para quem quer comecar logo.
+                  </p>
+                </div>
+              </div>
+
+              {jobListings.length > 0 ? (
+                <div className="mt-5 space-y-3">
+                  {jobListings.map(item => (
+                    (() => {
+                      const media = item as HomeHighlightListing & {
+                        images?: { url: string; isPrimary?: boolean | null }[];
+                      };
+                      const image =
+                        media.images?.find(image => image.isPrimary)?.url ||
+                        media.images?.[0]?.url;
+
+                      return (
+                        <Link
+                          key={item.id}
+                          href={`/anuncio/${item.id}`}
+                          className="flex items-center gap-3 rounded-[22px] border border-slate-200 bg-slate-50 p-3 transition hover:border-emerald-200 hover:bg-emerald-50/50"
+                        >
+                          <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-slate-100">
+                            {image ? (
+                          <img
+                            src={image}
+                            alt={item.title}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <BriefcaseBusiness className="h-6 w-6 text-slate-400" />
+                        )}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate font-display text-lg font-bold text-slate-900">
+                              {item.title}
+                            </p>
+                            <p className="mt-1 truncate text-sm text-slate-500">
+                              {[item.neighborhood, cities?.find(city => city.id === item.cityId)?.name]
+                                .filter(Boolean)
+                                .join(", ") || "Norte Pioneiro"}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })()
+                  ))}
+                </div>
+              ) : (
+                <div className="mt-5 rounded-[22px] border border-dashed border-slate-200 bg-slate-50 p-5">
+                  <p className="text-sm leading-6 text-slate-500">
+                    Ainda nao ha vagas publicadas. Em breve essa area pode reunir empregos e freelas da regiao.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="rounded-[32px] bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_55%,#f97316_140%)] p-6 text-white shadow-[0_22px_70px_rgba(15,23,42,0.18)] sm:p-8">
             <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
               <div>
