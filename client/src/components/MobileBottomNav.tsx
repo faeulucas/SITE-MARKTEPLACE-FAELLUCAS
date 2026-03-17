@@ -29,7 +29,7 @@ export default function MobileBottomNav() {
   const menuItems = [
     {
       label: isAuthenticated ? "Meu perfil" : "Entrar",
-      href: isAuthenticated ? "/anunciante" : LOGIN_ROUTE,
+      href: isAuthenticated ? "/minha-conta" : LOGIN_ROUTE,
       icon: isAuthenticated ? Store : LogIn,
     },
     {

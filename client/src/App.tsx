@@ -26,6 +26,7 @@ import CityPage from "./pages/City";
 import GuidePage from "./pages/Guide";
 import StoresPage from "./pages/Stores";
 import BoosterPage from "./pages/Booster";
+import MyAccountPanel from "./pages/account/MyAccountPanel";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -49,6 +50,7 @@ function Router() {
       <Route path="/guia" component={GuidePage} />
       <Route path="/lojas" component={StoresPage} />
       <Route path="/booster" component={BoosterPage} />
+      <Route path="/minha-conta" component={MyAccountPanel} />
       <Route path="/anuncio/:id" component={ListingDetailPage} />
       <Route path="/categoria/:slug" component={CategoryPage} />
       <Route path="/cidade/:slug" component={CityPage} />
@@ -59,7 +61,7 @@ function Router() {
       <Route path="/anunciante" component={AdvertiserDashboard} />
       <Route path="/anunciante/meus-dados" component={AdvertiserProfile} />
       <Route path="/painel" component={AdvertiserDashboard} />
-      <Route path="/cliente" component={AdvertiserDashboard} />
+      <Route path="/cliente" component={MyAccountPanel} />
       <Route path="/anunciante/novo" component={NewListing} />
       <Route path="/anunciante/editar/:id" component={NewListing} />
       <Route path="/anunciar" component={NewListing} />
