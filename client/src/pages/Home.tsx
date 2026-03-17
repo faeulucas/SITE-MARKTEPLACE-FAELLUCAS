@@ -1227,9 +1227,6 @@ export default function Home() {
                   <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">
                     Eventos da regiao
                   </p>
-                  <h2 className="mt-2 text-balance font-display text-2xl font-black leading-tight text-slate-900">
-                    Agenda local para voce nao perder o que vai rolar
-                  </h2>
                   <p className="mt-2 text-sm leading-6 text-slate-500">
                     Feiras, shows, encontros e atracoes da regiao em um so lugar.
                   </p>
@@ -1312,9 +1309,6 @@ export default function Home() {
                   <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-600">
                     Vagas de emprego
                   </p>
-                  <h2 className="mt-2 font-display text-2xl font-black text-slate-900">
-                    Oportunidades para trabalhar perto de casa
-                  </h2>
                   <p className="mt-2 text-sm leading-6 text-slate-500">
                     Vagas locais, trabalhos rapidos e chances reais para quem quer comecar logo.
                   </p>
