@@ -14,6 +14,7 @@ import {
   ShoppingBag,
   Store,
   Wallet,
+  X,
   Zap,
 } from "lucide-react";
 
@@ -28,17 +29,17 @@ export default function MobileBottomNav() {
 
   const menuItems = [
     {
-      label: isAuthenticated ? "Meu perfil" : "Entrar",
+      label: isAuthenticated ? "Minha conta" : "Entrar",
       href: isAuthenticated ? "/minha-conta" : LOGIN_ROUTE,
       icon: isAuthenticated ? Store : LogIn,
     },
     {
-      label: "Chat",
+      label: "Painel",
       href: isAuthenticated ? "/anunciante" : LOGIN_ROUTE,
       icon: MessageCircle,
     },
     {
-      label: "Meus anuncios",
+      label: "Meus anúncios",
       href: isAuthenticated ? "/anunciante" : LOGIN_ROUTE,
       icon: LayoutGrid,
     },
@@ -53,7 +54,7 @@ export default function MobileBottomNav() {
       icon: BadgeCheck,
     },
     {
-      label: "Minhas compras",
+      label: "Favoritos",
       href: isAuthenticated ? "/favoritos" : LOGIN_ROUTE,
       icon: Wallet,
     },
@@ -70,8 +71,9 @@ export default function MobileBottomNav() {
             }`}
           >
             <Home className="h-5 w-5" />
-            <span className="whitespace-nowrap">Inicio</span>
+            <span className="whitespace-nowrap">Início</span>
           </Link>
+
           <Link
             href="/busca"
             className={`flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-[11px] font-medium ${
@@ -83,6 +85,7 @@ export default function MobileBottomNav() {
             <Search className="h-5 w-5" />
             <span className="whitespace-nowrap">Buscar</span>
           </Link>
+
           <Link
             href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE}
             className={`flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-[11px] font-medium ${
@@ -98,6 +101,7 @@ export default function MobileBottomNav() {
             </span>
             <span className="whitespace-nowrap">Anunciar</span>
           </Link>
+
           <Link
             href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE}
             className={`flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-[11px] font-medium ${
@@ -108,16 +112,19 @@ export default function MobileBottomNav() {
             }`}
           >
             <MessageCircle className="h-5 w-5" />
-            <span className="whitespace-nowrap">Chat</span>
+            <span className="whitespace-nowrap">Painel</span>
           </Link>
+
           <button
             type="button"
-            onClick={() => setMenuOpen(current => !current)}
+            onClick={() => setMenuOpen((current) => !current)}
             className={`flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-[11px] font-medium ${
               menuOpen ? "text-orange-500" : "text-slate-700"
             }`}
+            aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+            title={menuOpen ? "Fechar menu" : "Abrir menu"}
           >
-            {menuOpen ? <LayoutGrid className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             <span className="whitespace-nowrap">Menu</span>
           </button>
         </div>
@@ -125,20 +132,27 @@ export default function MobileBottomNav() {
 
       <div
         className={`fixed inset-x-0 bottom-[72px] top-0 z-[60] overflow-hidden md:hidden ${
-          menuOpen ? "pointer-events-auto bg-white" : "pointer-events-none bg-transparent"
+          menuOpen ? "pointer-events-auto bg-white/30" : "pointer-events-none bg-transparent"
         }`}
       >
         <div
           className={`h-full overflow-y-auto border-t border-slate-200 bg-white shadow-[0_-18px_60px_rgba(15,23,42,0.16)] transition-all duration-200 ease-out ${
-            menuOpen
-              ? "translate-y-0 translate-x-0 opacity-100"
-              : "translate-y-4 opacity-0"
+            menuOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
           }`}
-          style={{ transformOrigin: "bottom right" }}
         >
+          <div className="px-5 pb-3 pt-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+              Acesso rápido
+            </p>
+            <h2 className="mt-1 font-display text-2xl font-black text-slate-900">
+              Menu do aplicativo
+            </h2>
+          </div>
+
           <div className="divide-y divide-slate-100">
-            {menuItems.map(item => {
+            {menuItems.map((item) => {
               const Icon = item.icon;
+
               return (
                 <Link
                   key={item.label}
