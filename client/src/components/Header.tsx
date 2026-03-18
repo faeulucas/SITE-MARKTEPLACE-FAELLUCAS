@@ -55,27 +55,67 @@ const HEADER_SHORTCUTS = [
 ];
 
 const HEADER_PILLS = [
-  { label: "Saude", href: "/busca?q=saude", icon: Stethoscope, tone: "bg-emerald-50 text-emerald-700" },
-  { label: "Educacao", href: "/busca?q=educacao", icon: Briefcase, tone: "bg-orange-50 text-orange-700" },
-  { label: "Delivery", href: "/categoria/delivery", icon: ShoppingBag, tone: "bg-amber-50 text-amber-700" },
-  { label: "Imoveis", href: "/busca?q=imoveis", icon: Home, tone: "bg-cyan-50 text-cyan-700" },
-  { label: "Veiculos", href: "/busca?q=veiculos", icon: Zap, tone: "bg-blue-50 text-blue-700" },
-  { label: "Servicos", href: "/busca?q=servicos", icon: Wrench, tone: "bg-violet-50 text-violet-700" },
-  { label: "Lojas", href: "/lojas", icon: Store, tone: "bg-blue-50 text-blue-700" },
-  { label: "Guia", href: "/guia", icon: HeartHandshake, tone: "bg-indigo-50 text-indigo-700" },
+  {
+    label: "Saúde",
+    href: "/busca?q=saude",
+    icon: Stethoscope,
+    tone: "bg-emerald-50 text-emerald-700",
+  },
+  {
+    label: "Educação",
+    href: "/busca?q=educacao",
+    icon: Briefcase,
+    tone: "bg-orange-50 text-orange-700",
+  },
+  {
+    label: "Delivery",
+    href: "/categoria/delivery",
+    icon: ShoppingBag,
+    tone: "bg-amber-50 text-amber-700",
+  },
+  {
+    label: "Imóveis",
+    href: "/busca?q=imoveis",
+    icon: Home,
+    tone: "bg-cyan-50 text-cyan-700",
+  },
+  {
+    label: "Veículos",
+    href: "/busca?q=veiculos",
+    icon: Car,
+    tone: "bg-blue-50 text-blue-700",
+  },
+  {
+    label: "Serviços",
+    href: "/busca?q=servicos",
+    icon: Wrench,
+    tone: "bg-violet-50 text-violet-700",
+  },
+  {
+    label: "Lojas",
+    href: "/lojas",
+    icon: Store,
+    tone: "bg-blue-50 text-blue-700",
+  },
+  {
+    label: "Guia",
+    href: "/guia",
+    icon: HeartHandshake,
+    tone: "bg-indigo-50 text-indigo-700",
+  },
 ];
 
 const PWA_TOP_TABS = [
   { label: "Tudo", href: "/busca", icon: Zap, tone: "text-slate-900" },
-  { label: "Veiculos", href: "/busca?q=veiculos", icon: Car, tone: "text-slate-700" },
-  { label: "Imoveis", href: "/busca?q=imoveis", icon: Home, tone: "text-slate-700" },
+  { label: "Veículos", href: "/busca?q=veiculos", icon: Car, tone: "text-slate-700" },
+  { label: "Imóveis", href: "/busca?q=imoveis", icon: Home, tone: "text-slate-700" },
   { label: "Produtos", href: "/busca", icon: ShoppingBag, tone: "text-slate-700" },
 ];
 
 const PWA_ACTION_PILLS = [
   { label: "Favoritos", href: "/favoritos", icon: Heart, tone: "bg-rose-50 text-rose-600" },
   { label: "Cupons", href: "/planos", icon: Percent, tone: "bg-violet-50 text-violet-600" },
-  { label: "Servicos", href: "/busca?q=servicos", icon: Wrench, tone: "bg-amber-50 text-amber-600" },
+  { label: "Serviços", href: "/busca?q=servicos", icon: Wrench, tone: "bg-amber-50 text-amber-600" },
   { label: "Categorias", href: "/busca", icon: LayoutDashboard, tone: "bg-indigo-50 text-indigo-600" },
 ];
 
@@ -95,6 +135,7 @@ export default function Header({
 }: HeaderProps) {
   const { user, isAuthenticated, logout } = useAuth();
   const [, navigate] = useLocation();
+
   const [searchQ, setSearchQ] = useState("");
   const [animatedQuery, setAnimatedQuery] = useState("");
   const [animatedIndex, setAnimatedIndex] = useState(0);
@@ -104,20 +145,21 @@ export default function Header({
   const displayName =
     user?.personType === "pj"
       ? user?.companyName || user?.name || "Loja"
-      : user?.name || "Usuario";
+      : user?.name || "Usuário";
+
   const displayInitial = displayName.charAt(0)?.toUpperCase() || "U";
 
   const { data: cities } = trpc.public.cities.useQuery();
   const { data: categories } = trpc.public.categories.useQuery();
 
   const searchSuggestions = useMemo(() => {
-    const categorySuggestions = (categories ?? []).map(category => category.name);
+    const categorySuggestions = (categories ?? []).map((category) => category.name);
     const fallbackSuggestions = [
       "carro",
       "delivery",
-      "imoveis",
-      "saude",
-      "servicos",
+      "imóveis",
+      "saúde",
+      "serviços",
     ];
 
     return Array.from(new Set([...categorySuggestions, ...fallbackSuggestions])).slice(0, 8);
@@ -145,7 +187,7 @@ export default function Header({
 
         if (nextValue.length === 0) {
           setIsDeleting(false);
-          setAnimatedIndex(current => (current + 1) % searchSuggestions.length);
+          setAnimatedIndex((current) => (current + 1) % searchSuggestions.length);
         }
       },
       !isDeleting
@@ -168,7 +210,10 @@ export default function Header({
     else navigate(`/busca?q=${encodeURIComponent(searchQ)}`);
   };
 
-  const searchPlaceholder = "Buscar produtos, serviços ou empresas...";
+  const searchPlaceholder =
+    searchQ.trim().length > 0
+      ? "Buscar produtos, serviços ou empresas..."
+      : `Buscar ${animatedQuery || "produtos, serviços ou empresas"}...`;
 
   return (
     <header className="sticky top-0 z-50 max-w-full overflow-x-clip border-b border-slate-200 bg-white/95 backdrop-blur">
@@ -179,13 +224,10 @@ export default function Header({
               <Zap className="h-5 w-5 text-white" />
             </div>
             <div>
-              <span className="font-display text-xl font-black text-gray-900">
+              <span className="font-display text-xl font-black text-slate-900">
                 Norte
               </span>
-              <span
-                className="font-display text-xl font-black"
-                style={{ color: "oklch(0.68 0.19 45)" }}
-              >
+              <span className="font-display text-xl font-black text-orange-500">
                 Vivo
               </span>
             </div>
@@ -198,15 +240,18 @@ export default function Header({
                 <input
                   type="text"
                   value={searchQ}
-                  onChange={e => setSearchQ(e.target.value)}
+                  onChange={(e) => setSearchQ(e.target.value)}
                   placeholder={searchPlaceholder}
                   className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-sm text-slate-700 outline-none"
+                  aria-label="Buscar produtos, serviços ou empresas"
                 />
               </div>
+
               <div className="h-8 w-px bg-slate-200" />
+
               <Select
                 value={selectedCity ? String(selectedCity) : "all"}
-                onValueChange={value =>
+                onValueChange={(value) =>
                   onCityChange?.(value === "all" ? null : Number(value))
                 }
               >
@@ -216,22 +261,30 @@ export default function Header({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas as cidades</SelectItem>
-                  {cities?.map(city => (
+                  {cities?.map((city) => (
                     <SelectItem key={city.id} value={String(city.id)}>
                       {city.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <Button type="submit" className="mr-2 rounded-xl bg-brand-gradient px-4 text-white">
+
+              <Button
+                type="submit"
+                className="mr-2 rounded-xl bg-brand-gradient px-4 text-white"
+              >
                 Buscar
               </Button>
             </div>
           </form>
 
           <nav className="flex shrink-0 items-center gap-4 text-sm font-semibold text-slate-600">
-            {HEADER_SHORTCUTS.map(item => (
-              <Link key={item.label} href={item.href} className="transition-colors hover:text-slate-900">
+            {HEADER_SHORTCUTS.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="transition-colors hover:text-slate-900"
+              >
                 {item.label}
               </Link>
             ))}
@@ -242,6 +295,8 @@ export default function Header({
               type="button"
               onClick={() => navigate(isAuthenticated ? "/anunciante" : LOGIN_ROUTE)}
               className="relative flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700"
+              aria-label="Abrir painel e notificações"
+              title="Abrir painel e notificações"
             >
               <Bell className="h-4 w-4" />
               <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-orange-500" />
@@ -250,7 +305,10 @@ export default function Header({
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center gap-2 rounded-2xl border border-slate-200 px-2">
+                  <Button
+                    variant="ghost"
+                    className="flex items-center gap-2 rounded-2xl border border-slate-200 px-2"
+                  >
                     <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-brand-gradient text-sm font-bold text-white">
                       {user?.avatar ? (
                         <img
@@ -265,27 +323,35 @@ export default function Header({
                     <ChevronDown className="h-3 w-3 text-slate-500" />
                   </Button>
                 </DropdownMenuTrigger>
+
                 <DropdownMenuContent align="end" className="w-56">
                   <div className="px-3 py-2">
                     <p className="text-sm font-semibold text-slate-900">{displayName}</p>
                     <p className="text-xs text-slate-500">{user?.email}</p>
                   </div>
+
                   <DropdownMenuSeparator />
+
                   <DropdownMenuItem onClick={() => navigate("/minha-conta")}>
-                    <LayoutDashboard className="mr-2 h-4 w-4" /> Minha Conta
+                    <LayoutDashboard className="mr-2 h-4 w-4" /> Minha conta
                   </DropdownMenuItem>
+
                   <DropdownMenuItem onClick={() => navigate("/favoritos")}>
                     <Heart className="mr-2 h-4 w-4" /> Favoritos
                   </DropdownMenuItem>
+
                   <DropdownMenuItem onClick={() => navigate("/anunciante/meus-dados")}>
-                    <Settings className="mr-2 h-4 w-4" /> Configuracoes
+                    <Settings className="mr-2 h-4 w-4" /> Configurações
                   </DropdownMenuItem>
+
                   {user?.role === "admin" && (
                     <DropdownMenuItem onClick={() => navigate("/admin")}>
                       <Shield className="mr-2 h-4 w-4" /> Admin
                     </DropdownMenuItem>
                   )}
+
                   <DropdownMenuSeparator />
+
                   <DropdownMenuItem onClick={() => logout()} className="text-red-600">
                     <LogOut className="mr-2 h-4 w-4" /> Sair
                   </DropdownMenuItem>
@@ -303,7 +369,7 @@ export default function Header({
             <Link href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE}>
               <Button className="rounded-2xl bg-orange-gradient px-4 font-bold text-white shadow-md hover:opacity-90">
                 <Plus className="mr-2 h-4 w-4" />
-                Anunciar Agora
+                Anunciar agora
               </Button>
             </Link>
           </div>
@@ -315,17 +381,17 @@ export default function Header({
               <div className="flex items-center justify-between gap-3">
                 <Select
                   value={selectedCity ? String(selectedCity) : "all"}
-                  onValueChange={value =>
+                  onValueChange={(value) =>
                     onCityChange?.(value === "all" ? null : Number(value))
                   }
                 >
                   <SelectTrigger className="h-auto max-w-[240px] border-0 bg-transparent px-0 text-sm font-medium text-slate-800 shadow-none focus:ring-0">
                     <MapPin className="mr-1 h-4 w-4 text-slate-500" />
-                    <SelectValue placeholder="DDD 43 - Londrina e regiao" />
+                    <SelectValue placeholder="Todas as cidades" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todas as cidades</SelectItem>
-                    {cities?.map(city => (
+                    {cities?.map((city) => (
                       <SelectItem key={city.id} value={String(city.id)}>
                         {city.name}
                       </SelectItem>
@@ -337,6 +403,8 @@ export default function Header({
                   type="button"
                   onClick={() => navigate(isAuthenticated ? "/anunciante" : LOGIN_ROUTE)}
                   className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-slate-700"
+                  aria-label="Abrir painel e notificações"
+                  title="Abrir painel e notificações"
                 >
                   <Bell className="h-5 w-5" />
                   <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-orange-500" />
@@ -354,10 +422,18 @@ export default function Header({
                         className={`flex min-w-[64px] flex-col items-center gap-1 text-xs font-medium ${item.tone}`}
                       >
                         <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
-                          <Icon className={`h-5 w-5 ${index === 0 ? "text-orange-500" : item.tone}`} />
+                          <Icon
+                            className={`h-5 w-5 ${
+                              index === 0 ? "text-orange-500" : item.tone
+                            }`}
+                          />
                         </span>
                         <span>{item.label}</span>
-                        <span className={`mt-1 h-0.5 w-10 rounded-full ${index === 0 ? "bg-slate-900" : "bg-transparent"}`} />
+                        <span
+                          className={`mt-1 h-0.5 w-10 rounded-full ${
+                            index === 0 ? "bg-slate-900" : "bg-transparent"
+                          }`}
+                        />
                       </Link>
                     );
                   })}
@@ -370,21 +446,23 @@ export default function Header({
                   <input
                     type="text"
                     value={searchQ}
-                    onChange={e => setSearchQ(e.target.value)}
-                    placeholder="Buscar em Todos"
+                    onChange={(e) => setSearchQ(e.target.value)}
+                    placeholder="Buscar em tudo"
                     className="h-12 w-full rounded-full border border-slate-200 bg-slate-50 py-3 pl-11 pr-4 text-sm text-slate-700 outline-none"
+                    aria-label="Buscar em tudo"
                   />
                 </div>
               </form>
 
               <div className="overflow-x-auto scrollbar-hide">
                 <div className="flex w-max gap-3 pb-1">
-                  {PWA_ACTION_PILLS.map(item => {
+                  {PWA_ACTION_PILLS.map((item) => {
                     const Icon = item.icon;
                     const href =
                       item.label === "Favoritos" && !isAuthenticated
                         ? LOGIN_ROUTE
                         : item.href;
+
                     return (
                       <Link
                         key={item.label}
@@ -409,9 +487,9 @@ export default function Header({
                     <Zap className="h-5 w-5 text-white" />
                   </div>
                   <div className="min-w-0">
-                    <p className="font-display text-lg font-black leading-none text-gray-900">
+                    <p className="font-display text-lg font-black leading-none text-slate-900">
                       Norte
-                      <span style={{ color: "oklch(0.68 0.19 45)" }}>Vivo</span>
+                      <span className="text-orange-500">Vivo</span>
                     </p>
                   </div>
                 </Link>
@@ -421,13 +499,16 @@ export default function Header({
                     <input
                       type="text"
                       value={searchQ}
-                      onChange={e => setSearchQ(e.target.value)}
+                      onChange={(e) => setSearchQ(e.target.value)}
                       placeholder={searchPlaceholder}
                       className="h-12 w-full rounded-2xl border border-slate-200 bg-white py-3 pl-4 pr-12 text-sm text-slate-700 outline-none"
+                      aria-label="Buscar produtos, serviços ou empresas"
                     />
                     <button
                       type="submit"
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-700"
+                      aria-label="Buscar"
+                      title="Buscar"
                     >
                       <Search className="h-5 w-5" />
                     </button>
@@ -438,6 +519,8 @@ export default function Header({
                   type="button"
                   onClick={() => navigate(isAuthenticated ? "/anunciante" : LOGIN_ROUTE)}
                   className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-slate-700"
+                  aria-label="Abrir painel e notificações"
+                  title="Abrir painel e notificações"
                 >
                   <Bell className="h-5 w-5" />
                   <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-orange-500" />
@@ -447,17 +530,17 @@ export default function Header({
               <div className="border-b border-slate-100 pb-2">
                 <Select
                   value={selectedCity ? String(selectedCity) : "all"}
-                  onValueChange={value =>
+                  onValueChange={(value) =>
                     onCityChange?.(value === "all" ? null : Number(value))
                   }
                 >
                   <SelectTrigger className="h-auto max-w-[180px] border-0 bg-transparent px-0 text-sm font-medium text-slate-700 shadow-none focus:ring-0">
                     <MapPin className="mr-1 h-4 w-4 text-slate-500" />
-                    <SelectValue placeholder="Parana" />
+                    <SelectValue placeholder="Todas as cidades" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todas as cidades</SelectItem>
-                    {cities?.map(city => (
+                    {cities?.map((city) => (
                       <SelectItem key={city.id} value={String(city.id)}>
                         {city.name}
                       </SelectItem>
@@ -470,25 +553,33 @@ export default function Header({
         </div>
       </div>
 
-      <div className={`border-t border-slate-100 bg-white ${isPwaMode ? "hidden xl:block" : ""}`}>
+      <div
+        className={`border-t border-slate-100 bg-white ${
+          isPwaMode ? "hidden xl:block" : ""
+        }`}
+      >
         <div className="container">
           <div className="overflow-x-auto py-2 sm:py-3 scrollbar-hide">
             <div className="flex w-max items-center gap-2 motion-safe:animate-pill-marquee">
               {[...HEADER_PILLS, ...HEADER_PILLS, ...HEADER_PILLS].map((item, index) => {
-              const Icon = item.icon;
-              const href = item.label === "Favoritos" && !isAuthenticated ? LOGIN_ROUTE : item.href;
-              return (
-                <Link
-                  key={`${item.label}-${index}`}
-                  href={href}
-                  className="inline-flex shrink-0 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
-                >
-                  <span className={`inline-flex rounded-full p-2 ${item.tone}`}>
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  {item.label}
-                </Link>
-              );
+                const Icon = item.icon;
+                const href =
+                  item.label === "Favoritos" && !isAuthenticated
+                    ? LOGIN_ROUTE
+                    : item.href;
+
+                return (
+                  <Link
+                    key={`${item.label}-${index}`}
+                    href={href}
+                    className="inline-flex shrink-0 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                  >
+                    <span className={`inline-flex rounded-full p-2 ${item.tone}`}>
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    {item.label}
+                  </Link>
+                );
               })}
             </div>
           </div>
