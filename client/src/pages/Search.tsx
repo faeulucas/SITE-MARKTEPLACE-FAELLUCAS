@@ -216,6 +216,7 @@ export default function SearchPage() {
                       value={q}
                       onChange={(event) => setQ(event.target.value)}
                       placeholder="O que você está buscando?"
+                      aria-label="Buscar produtos, serviços ou oportunidades"
                       className="w-full rounded-2xl border border-white/20 bg-white py-3 pl-11 pr-4 text-sm text-slate-800 outline-none transition focus:border-orange-300"
                     />
                   </div>
@@ -296,7 +297,12 @@ export default function SearchPage() {
                     className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700"
                   >
                     {filter!.label}
-                    <button type="button" onClick={filter!.clear}>
+                    <button
+                      type="button"
+                      onClick={filter!.clear}
+                      aria-label={`Remover filtro ${filter!.label}`}
+                      title={`Remover filtro ${filter!.label}`}
+                    >
                       <X className="h-3 w-3" />
                     </button>
                   </span>
@@ -318,6 +324,7 @@ export default function SearchPage() {
                   variant="outline"
                   className="rounded-2xl lg:hidden"
                   onClick={() => setShowFilters((current) => !current)}
+                  title={showFilters ? "Fechar filtros" : "Abrir filtros"}
                 >
                   <SlidersHorizontal className="mr-2 h-4 w-4" />
                   Filtros
@@ -358,6 +365,8 @@ export default function SearchPage() {
                   size="sm"
                   className="rounded-xl text-slate-500 lg:hidden"
                   onClick={() => setShowFilters(false)}
+                  aria-label="Fechar filtros"
+                  title="Fechar filtros"
                 >
                   <X className="h-4 w-4" />
                 </Button>
