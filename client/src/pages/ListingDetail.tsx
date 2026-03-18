@@ -13,7 +13,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Zap,
-  Star,
   Flag,
   Bell,
   Store,
@@ -387,6 +386,7 @@ export default function ListingDetailPage() {
                     void handleShare();
                   }}
                   className="h-12 rounded-2xl border-white/30 bg-white/10 px-6 text-white hover:bg-white/15"
+                  title="Compartilhar anúncio"
                 >
                   <Share2 className="mr-2 h-4 w-4" />
                   Compartilhar
@@ -519,6 +519,9 @@ export default function ListingDetailPage() {
                   <button
                     onClick={() => setCurrentImage((i) => Math.max(0, i - 1))}
                     className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-md transition-colors hover:bg-white"
+                    type="button"
+                    aria-label="Imagem anterior"
+                    title="Imagem anterior"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
@@ -528,6 +531,9 @@ export default function ListingDetailPage() {
                       setCurrentImage((i) => Math.min(images.length - 1, i + 1))
                     }
                     className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-md transition-colors hover:bg-white"
+                    type="button"
+                    aria-label="Próxima imagem"
+                    title="Próxima imagem"
                   >
                     <ChevronRight className="h-5 w-5" />
                   </button>
@@ -544,10 +550,13 @@ export default function ListingDetailPage() {
                     className={`h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition-all ${
                       i === currentImage ? "border-blue-500" : "border-transparent"
                     }`}
+                    type="button"
+                    aria-label={`Abrir imagem ${i + 1}`}
+                    title={`Abrir imagem ${i + 1}`}
                   >
                     <img
                       src={img.url}
-                      alt=""
+                      alt={`Miniatura ${i + 1} do anúncio`}
                       className="h-full w-full object-cover"
                     />
                   </button>
@@ -592,10 +601,7 @@ export default function ListingDetailPage() {
                 {listing.title}
               </h2>
 
-              <div
-                className="mt-3 break-words text-3xl font-black"
-                style={{ color: "oklch(0.48 0.22 255)" }}
-              >
+              <div className="mt-3 break-words text-3xl font-black text-blue-700">
                 {formatPrice()}
               </div>
 
@@ -670,6 +676,7 @@ export default function ListingDetailPage() {
                     }
                   }}
                   className="w-full rounded-2xl py-6 text-base"
+                  title="Favoritar anúncio"
                 >
                   <Heart className="mr-2 h-5 w-5" />
                   Favoritar anúncio
@@ -680,6 +687,7 @@ export default function ListingDetailPage() {
                   variant="outline"
                   onClick={togglePriceAlert}
                   className="w-full rounded-2xl py-6 text-base"
+                  title="Ativar alerta de preço"
                 >
                   <Bell className="mr-2 h-5 w-5" />
                   {hasPriceAlert ? "Aviso de preço ativo" : "Avisar queda de preço"}
@@ -822,6 +830,7 @@ export default function ListingDetailPage() {
                       variant="outline"
                       onClick={toggleFollowSeller}
                       className="rounded-2xl"
+                      title="Seguir loja"
                     >
                       <Bell className="mr-2 h-4 w-4" />
                       {isFollowingSeller ? "Seguindo loja" : "Seguir loja"}
@@ -936,6 +945,7 @@ export default function ListingDetailPage() {
                   void handleShare();
                 }}
                 className="h-12 rounded-2xl border-white/30 bg-white/10 text-white hover:bg-white/15"
+                title="Compartilhar anúncio"
               >
                 <Share2 className="mr-2 h-4 w-4" />
                 Compartilhar
@@ -946,12 +956,18 @@ export default function ListingDetailPage() {
                 variant="outline"
                 onClick={toggleFollowSeller}
                 className="h-12 rounded-2xl border-white/30 bg-white/10 text-white hover:bg-white/15"
+                title="Seguir perfil da loja"
               >
                 <Store className="mr-2 h-4 w-4" />
                 {isFollowingSeller ? "Seguindo loja" : "Seguir perfil"}
               </Button>
 
-              <button className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-4 text-sm font-medium text-white transition hover:bg-white/15">
+              <button
+                type="button"
+                className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-4 text-sm font-medium text-white transition hover:bg-white/15"
+                aria-label="Denunciar anúncio"
+                title="Denunciar anúncio"
+              >
                 <Flag className="mr-2 h-4 w-4" />
                 Denunciar anúncio
               </button>
