@@ -29,9 +29,9 @@ interface ListingCardProps {
 
 const TYPE_LABELS: Record<string, string> = {
   product: "Produto",
-  service: "Servico",
-  vehicle: "Veiculo",
-  property: "Imovel",
+  service: "Serviço",
+  vehicle: "Veículo",
+  property: "Imóvel",
   food: "Comida",
   job: "Emprego",
 };
@@ -54,16 +54,17 @@ export default function ListingCard({
   isFavorited,
   cityName,
 }: ListingCardProps) {
-  const primaryImage = images?.find(image => image.isPrimary) || images?.[0];
+  const primaryImage = images?.find((image) => image.isPrimary) || images?.[0];
   const sellerLabel = seller?.name || "Anunciante";
 
   const formatPrice = () => {
-    if (!price || priceType === "free") return "Gratis";
+    if (!price || priceType === "free") return "Grátis";
     if (priceType === "on_request") return "Sob consulta";
+
     if (priceType === "negotiable") {
       return `R$ ${Number(price).toLocaleString("pt-BR", {
         minimumFractionDigits: 2,
-      })} (negociavel)`;
+      })} (negociável)`;
     }
 
     return `R$ ${Number(price).toLocaleString("pt-BR", {
@@ -78,7 +79,9 @@ export default function ListingCard({
 
   return (
     <div
-      className={`group relative overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg ${isBoosted ? "ring-2 ring-amber-400" : ""}`}
+      className={`group relative overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg ${
+        isBoosted ? "ring-2 ring-amber-400" : ""
+      }`}
     >
       <div className="absolute left-3 top-3 z-10 flex flex-col gap-1">
         {isBoosted && (
@@ -87,6 +90,7 @@ export default function ListingCard({
             BOOSTER
           </span>
         )}
+
         {type && (
           <span className="inline-flex rounded-full bg-blue-600 px-2.5 py-1 text-xs font-medium text-white">
             {TYPE_LABELS[type] || type}
@@ -95,14 +99,19 @@ export default function ListingCard({
       </div>
 
       <button
-        onClick={event => {
+        onClick={(event) => {
           event.preventDefault();
           onFavorite?.(id);
         }}
         className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 shadow-md transition-transform hover:scale-110"
+        aria-label={isFavorited ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+        title={isFavorited ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+        type="button"
       >
         <Heart
-          className={`h-4 w-4 ${isFavorited ? "fill-red-500 text-red-500" : "text-slate-400"}`}
+          className={`h-4 w-4 ${
+            isFavorited ? "fill-red-500 text-red-500" : "text-slate-400"
+          }`}
         />
       </button>
 
@@ -134,19 +143,17 @@ export default function ListingCard({
             {title}
           </h3>
 
-          <p
-            className="mt-2 text-xl font-black"
-            style={{ color: "oklch(0.48 0.22 255)" }}
-          >
-            {formatPrice()}
-          </p>
+          <p className="mt-2 text-xl font-black text-blue-700">{formatPrice()}</p>
 
-          <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
-            <div className="flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              <span>{neighborhood || cityName || "Norte Pioneiro"}</span>
+          <div className="mt-3 flex items-center justify-between gap-3 text-xs text-slate-500">
+            <div className="flex min-w-0 items-center gap-1">
+              <MapPin className="h-3 w-3 shrink-0" />
+              <span className="truncate">
+                {neighborhood || cityName || "Norte Pioneiro"}
+              </span>
             </div>
-            <div className="flex items-center gap-1">
+
+            <div className="flex shrink-0 items-center gap-1">
               <Clock className="h-3 w-3" />
               <span>{timeAgo}</span>
             </div>
@@ -157,12 +164,15 @@ export default function ListingCard({
               <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
                 {sellerLabel.charAt(0)?.toUpperCase() || "?"}
               </div>
+
               <span className="truncate text-xs font-medium text-slate-600">
                 {sellerLabel}
               </span>
+
               {seller.isVerified && (
                 <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-blue-500" />
               )}
+
               {viewCount !== undefined && (
                 <div className="ml-auto flex items-center gap-1 text-slate-400">
                   <Eye className="h-3 w-3" />
