@@ -527,12 +527,7 @@ export default function Home() {
                 <div className="flex items-center gap-2">
                   <Link href={isAuthenticated ? "/favoritos" : LOGIN_ROUTE}>
                     <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
-                      <span className="text-base">⭐</span>
-                    </button>
-                  </Link>
-                  <Link href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE}>
-                    <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
-                      <span className="text-base">🧭</span>
+                      <span className="text-base">❤️</span>
                     </button>
                   </Link>
                   <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
