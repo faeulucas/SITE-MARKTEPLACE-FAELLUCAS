@@ -151,7 +151,7 @@ const PILLARS = [
 ];
 
 const QUICK_SEGMENTS = [
-  { label: "Seja d+", icon: "✨" },
+  { label: "Seja d+", icon: "🩷" },
   { label: "Lanches", icon: "🥪" },
   { label: "Pizza", icon: "🍕" },
   { label: "Burguer", icon: "🍔" },
@@ -170,14 +170,14 @@ const MOBILE_TABS = [
 ];
 
 const CATEGORY_SHORTCUTS = [
-  { label: "Promoções", href: "/busca?q=promo", icon: Percent, tone: "bg-orange-50 text-orange-700" },
-  { label: "Delivery", href: "/busca?type=food", icon: Utensils, tone: "bg-rose-50 text-rose-700" },
-  { label: "Mercado", href: "/busca?q=mercado", icon: ShoppingCart, tone: "bg-amber-50 text-amber-700" },
-  { label: "Lojas", href: "/lojas", icon: Store, tone: "bg-indigo-50 text-indigo-700" },
-  { label: "Serviços", href: "/busca?q=servicos", icon: Wrench, tone: "bg-emerald-50 text-emerald-700" },
-  { label: "Imóveis", href: "/busca?type=property", icon: Building2, tone: "bg-blue-50 text-blue-700" },
-  { label: "Eventos", href: "/busca?q=eventos", icon: CalendarDays, tone: "bg-purple-50 text-purple-700" },
-  { label: "Empregos", href: "/busca?type=job", icon: BriefcaseBusiness, tone: "bg-cyan-50 text-cyan-700" },
+  { label: "Promoções", href: "/busca?q=promo", emoji: "🧧", tone: "bg-orange-50 text-orange-700" },
+  { label: "Delivery", href: "/busca?type=food", emoji: "🍽️", tone: "bg-rose-50 text-rose-700" },
+  { label: "Mercado", href: "/busca?q=mercado", emoji: "🛒", tone: "bg-amber-50 text-amber-700" },
+  { label: "Lojas", href: "/lojas", emoji: "🏬", tone: "bg-indigo-50 text-indigo-700" },
+  { label: "Serviços", href: "/busca?q=servicos", emoji: "🛠️", tone: "bg-emerald-50 text-emerald-700" },
+  { label: "Imóveis", href: "/busca?type=property", emoji: "🏡", tone: "bg-blue-50 text-blue-700" },
+  { label: "Eventos", href: "/busca?q=eventos", emoji: "📅", tone: "bg-purple-50 text-purple-700" },
+  { label: "Empregos", href: "/busca?type=job", emoji: "💼", tone: "bg-cyan-50 text-cyan-700" },
 ];
 
 const FILTER_CHIPS = ["Filtros", "Entrega grátis", "Promoções"];
@@ -587,7 +587,6 @@ export default function Home() {
 
           <div className="container mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4">
             {CATEGORY_SHORTCUTS.map((item) => {
-              const Icon = item.icon;
               return (
                 <Link
                   key={item.label}
@@ -595,9 +594,9 @@ export default function Home() {
                   className="flex min-h-[88px] flex-col items-center justify-between rounded-2xl border border-slate-100 bg-white p-3 text-center shadow-sm transition hover:border-orange-200 hover:shadow-md"
                 >
                   <span
-                    className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold ${item.tone}`}
+                    className={`flex h-11 w-11 items-center justify-center rounded-2xl text-xl ${item.tone}`}
                   >
-                    <Icon className="h-5 w-5" />
+                    {item.emoji}
                   </span>
                   <span className="text-[12px] font-semibold leading-tight text-slate-800">
                     {item.label}
