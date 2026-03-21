@@ -506,38 +506,52 @@ export default function Home() {
         ctaLabel="Abrir"
         ctaHref="/app"
       />
-      <Header
-        selectedCity={selectedCity}
-        onCityChange={setSelectedCity}
-        onSearch={handleSearch}
-      />
+
+      <div className="hidden md:block">
+        <Header
+          selectedCity={selectedCity}
+          onCityChange={setSelectedCity}
+          onSearch={handleSearch}
+        />
+      </div>
 
       <main className="pb-24 md:pb-0">
         <div className="md:hidden">
-          <section className="border-b border-slate-100 bg-white/90 backdrop-blur">
-            <div className="container space-y-3 pt-3 pb-4">
+          <section className="border-b border-slate-100 bg-white/95 backdrop-blur">
+            <div className="container space-y-3 pt-3 pb-3">
               <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                    Sua região
-                  </p>
-                  <p className="text-base font-bold text-slate-900">{selectedCityName}</p>
+                <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+                  <MapPin className="h-4 w-4 text-orange-500" />
+                  <span>{selectedCityName}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Link href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE}>
-                    <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
-                      <span className="text-lg">🧭</span>
-                    </button>
-                  </Link>
                   <Link href={isAuthenticated ? "/favoritos" : LOGIN_ROUTE}>
-                    <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
-                      <span className="text-lg">⭐</span>
+                    <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
+                      <span className="text-base">⭐</span>
                     </button>
                   </Link>
-                  <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
-                    <span className="text-lg">🔔</span>
+                  <Link href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE}>
+                    <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
+                      <span className="text-base">🧭</span>
+                    </button>
+                  </Link>
+                  <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
+                    <span className="text-base">🔔</span>
                   </button>
                 </div>
+              </div>
+
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {MOBILE_TABS.map((tab) => (
+                  <Link
+                    key={tab.label}
+                    href={tab.href}
+                    className="flex min-w-[96px] items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm transition hover:border-orange-200 hover:bg-orange-50"
+                  >
+                    <span className="text-base">{tab.emoji}</span>
+                    <span className="truncate">{tab.label}</span>
+                  </Link>
+                ))}
               </div>
 
               <button
@@ -545,22 +559,19 @@ export default function Home() {
                 onClick={() => handleSearch("")}
               >
                 <Search className="h-4 w-4 text-orange-600" />
-                Buscar produtos, lojas e serviços
+                Buscar em tudo
               </button>
 
               <div className="flex gap-2 overflow-x-auto pb-1">
-                {MOBILE_TABS.map((tab) => {
-                  return (
-                    <Link
-                      key={tab.label}
-                      href={tab.href}
-                      className="flex min-w-[112px] items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm transition hover:border-orange-200 hover:bg-orange-50"
-                    >
-                      <span className="text-base">{tab.emoji}</span>
-                      <span className="truncate">{tab.label}</span>
-                    </Link>
-                  );
-                })}
+                {["Favoritos", "Cupons", "Serviços", "Mercados"].map((chip) => (
+                  <button
+                    key={chip}
+                    onClick={() => handleSearch(chip.toLowerCase())}
+                    className="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm"
+                  >
+                    {chip}
+                  </button>
+                ))}
               </div>
             </div>
           </section>
