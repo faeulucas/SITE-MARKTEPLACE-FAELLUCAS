@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -14,6 +14,7 @@ import {
   Ambulance,
   ArrowRight,
   BadgeCheck,
+  Bell,
   BriefcaseBusiness,
   Building2,
   CalendarDays,
@@ -21,6 +22,7 @@ import {
   Home as HomeIcon,
   LayoutGrid,
   MapPin,
+  Percent,
   Phone,
   Search,
   Shield,
@@ -29,6 +31,7 @@ import {
   Star,
   Store,
   Stethoscope,
+  Utensils,
   Wrench,
   Zap,
 } from "lucide-react";
@@ -74,43 +77,43 @@ function parseHomeExtraData(value?: string | null) {
 
 const GUIDE_SHORTCUTS = [
   {
-    title: "Saúde",
-    description: "Hospitais, clínicas e farmácias",
+    title: "SaÃºde",
+    description: "Hospitais, clÃ­nicas e farmÃ¡cias",
     href: "/busca?q=saude",
     icon: Stethoscope,
     tone: "bg-emerald-50 text-emerald-700",
   },
   {
-    title: "Segurança",
-    description: "Polícia, apoio e serviços úteis",
+    title: "SeguranÃ§a",
+    description: "PolÃ­cia, apoio e serviÃ§os Ãºteis",
     href: "/busca?q=seguranca",
     icon: Shield,
     tone: "bg-blue-50 text-blue-700",
   },
   {
-    title: "Emergências",
-    description: "Atalhos rápidos para urgências",
+    title: "EmergÃªncias",
+    description: "Atalhos rÃ¡pidos para urgÃªncias",
     href: "/busca?q=emergencia",
     icon: Ambulance,
     tone: "bg-rose-50 text-rose-700",
   },
   {
     title: "Oficinas",
-    description: "Mecânicos, eletricistas e reparos",
+    description: "MecÃ¢nicos, eletricistas e reparos",
     href: "/busca?q=oficina",
     icon: Wrench,
     tone: "bg-amber-50 text-amber-700",
   },
   {
-    title: "Serviços",
-    description: "Prestadores e negócios locais",
+    title: "ServiÃ§os",
+    description: "Prestadores e negÃ³cios locais",
     href: "/busca?q=servicos",
     icon: HeartHandshake,
     tone: "bg-violet-50 text-violet-700",
   },
   {
     title: "Empresas",
-    description: "Lojas, comércios e contatos úteis",
+    description: "Lojas, comÃ©rcios e contatos Ãºteis",
     href: "/lojas",
     icon: Building2,
     tone: "bg-slate-100 text-slate-700",
@@ -120,7 +123,7 @@ const GUIDE_SHORTCUTS = [
 const PILLARS = [
   {
     label: "Guia Local",
-    description: "Encontre telefones, serviços e empresas da sua cidade.",
+    description: "Encontre telefones, serviÃ§os e empresas da sua cidade.",
     href: "/guia",
     icon: MapPin,
     badge: "Informativo local",
@@ -129,7 +132,7 @@ const PILLARS = [
   },
   {
     label: "Marketplace Regional",
-    description: "Descubra produtos, ofertas e oportunidades perto de você.",
+    description: "Descubra produtos, ofertas e oportunidades perto de vocÃª.",
     href: "/busca",
     icon: ShoppingCart,
     badge: "Compra e venda",
@@ -138,49 +141,69 @@ const PILLARS = [
   },
   {
     label: "Crie sua Loja",
-    description: "Monte sua vitrine online e apareça para novos clientes.",
+    description: "Monte sua vitrine online e apareÃ§a para novos clientes.",
     href: "/lojas",
     icon: Store,
-    badge: "Para quem não tem site",
+    badge: "Para quem nÃ£o tem site",
     tone:
       "border-slate-800 bg-slate-900 text-white hover:bg-slate-800 hover:shadow-lg",
   },
 ];
 
 const QUICK_SEGMENTS = [
-  { label: "Seja d+", icon: "🍬" },
-  { label: "Lanches", icon: "🍔" },
-  { label: "Pizza", icon: "🍕" },
-  { label: "Burguer", icon: "🍔" },
-  { label: "Porções", icon: "🍟" },
-  { label: "Marmita", icon: "🥡" },
-  { label: "Sushi", icon: "🍣" },
+  { label: "Seja d+", icon: "ðŸ¬" },
+  { label: "Lanches", icon: "ðŸ”" },
+  { label: "Pizza", icon: "ðŸ•" },
+  { label: "Burguer", icon: "ðŸ”" },
+  { label: "PorÃ§Ãµes", icon: "ðŸŸ" },
+  { label: "Marmita", icon: "ðŸ¥¡" },
+  { label: "Sushi", icon: "ðŸ£" },
 ];
 
-const FILTER_CHIPS = ["Filtros", "Entrega grátis", "Promoções"];
+const MOBILE_TABS = [
+  { label: "Tudo", href: "/", icon: LayoutGrid },
+  { label: "Restaurantes", href: "/busca?type=food", icon: Utensils },
+  { label: "Mercados", href: "/busca?q=mercado", icon: ShoppingCart },
+  { label: "Lojas", href: "/lojas", icon: Store },
+  { label: "ServiÃ§os", href: "/busca?q=servicos", icon: Wrench },
+  { label: "Guia local", href: "/guia", icon: MapPin },
+];
+
+const CATEGORY_SHORTCUTS = [
+  { label: "PromoÃ§Ãµes", href: "/busca?q=promo", icon: Percent, tone: "bg-orange-50 text-orange-700" },
+  { label: "Delivery", href: "/busca?type=food", icon: Utensils, tone: "bg-rose-50 text-rose-700" },
+  { label: "Mercado", href: "/busca?q=mercado", icon: ShoppingCart, tone: "bg-amber-50 text-amber-700" },
+  { label: "Lojas", href: "/lojas", icon: Store, tone: "bg-indigo-50 text-indigo-700" },
+  { label: "ServiÃ§os", href: "/busca?q=servicos", icon: Wrench, tone: "bg-emerald-50 text-emerald-700" },
+  { label: "ImÃ³veis", href: "/busca?type=property", icon: Building2, tone: "bg-blue-50 text-blue-700" },
+  { label: "Eventos", href: "/busca?q=eventos", icon: CalendarDays, tone: "bg-purple-50 text-purple-700" },
+  { label: "Empregos", href: "/busca?type=job", icon: BriefcaseBusiness, tone: "bg-cyan-50 text-cyan-700" },
+];
+
+const FILTER_CHIPS = ["Filtros", "Entrega grÃ¡tis", "PromoÃ§Ãµes"];
 
 const PROMO_BANNERS = [
   {
     id: "club-cupom",
     title: "clube de cupons",
-    subtitle: "receba cupons exclusivos e economize todo mês!",
+    subtitle: "receba cupons exclusivos e economize todo mÃªs!",
     cta: "ver ofertas",
     href: "/busca?q=promo",
   },
   {
     id: "mega-off",
     title: "35% OFF",
-    subtitle: "os rangos que são sucesso com cupom: ESTRELAS",
+    subtitle: "os rangos que sÃ£o sucesso com cupom: ESTRELAS",
     cta: "usar cupom",
     href: "/busca?q=estrelas",
   },
 ];
 
 const COLLECTION_CARD = {
-  title: "coleções de lojas e promos",
+  title: "coleÃ§Ãµes de lojas e promos",
   href: "/busca?q=promocoes",
   cardTitle: "Promos que adoramos",
-  cardSubtitle: "sei que seu hobby é pagar no precinho",
+  cardSubtitle: "sei que seu hobby Ã© pagar no precinho",
 };
 function isServiceProviderListing(
   item: HomeHighlightListing,
@@ -271,7 +294,7 @@ function isEventListing(item: HomeHighlightListing, categoryName?: string) {
 }
 
 function formatListingPrice(price?: string | null, priceType?: string | null) {
-  if (!price || priceType === "free") return "Grátis";
+  if (!price || priceType === "free") return "GrÃ¡tis";
   if (priceType === "on_request") return "Sob consulta";
 
   const formatted = `R$ ${Number(price).toLocaleString("pt-BR", {
@@ -284,10 +307,10 @@ function formatListingPrice(price?: string | null, priceType?: string | null) {
 }
 
 function getPriceTypeLabel(priceType?: string | null) {
-  if (priceType === "negotiable") return "Negociável";
+  if (priceType === "negotiable") return "NegociÃ¡vel";
   if (priceType === "on_request") return "Sob consulta";
-  if (priceType === "free") return "Grátis";
-  return "Preço fixo";
+  if (priceType === "free") return "GrÃ¡tis";
+  return "PreÃ§o fixo";
 }
 
 function SectionHeader({
@@ -484,189 +507,525 @@ export default function Home() {
       />
 
       <main className="pb-24 md:pb-0">
-        <AppInstallBanner
-          title="Use o aplicativo"
-          subtitle="Acesso rápido e fácil no app"
-          ctaLabel="Abrir"
-          ctaHref="/app"
-        />
-        {/* PWA-style home layout */}
-        <section className="bg-white">
-          <div className="container space-y-4 pt-4 pb-2 sm:pt-6">
-            <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="md:hidden">
+          <section className="border-b border-slate-100 bg-white/90 backdrop-blur">
+            <div className="container space-y-3 pt-3 pb-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    Sua região
+                  </p>
+                  <p className="text-base font-bold text-slate-900">{selectedCityName}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Link href={isAuthenticated ? "/anunciante" : LOGIN_ROUTE}>
+                    <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
+                      <LayoutGrid className="h-5 w-5" />
+                    </button>
+                  </Link>
+                  <Link href={isAuthenticated ? "/favoritos" : LOGIN_ROUTE}>
+                    <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
+                      <Star className="h-5 w-5" />
+                    </button>
+                  </Link>
+                  <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
+                    <Bell className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+
               <button
-                type="button"
-                onClick={() => setActiveCategoryId("all")}
-                className={`shrink-0 rounded-2xl border px-4 py-2 text-sm font-semibold transition ${
-                  activeCategoryId === "all"
-                    ? "border-orange-300 bg-orange-50 text-orange-700"
-                    : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
-                }`}
+                className="flex w-full items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-semibold text-slate-800 shadow-sm"
+                onClick={() => handleSearch("")}
               >
-                Tudo
+                <Search className="h-4 w-4 text-orange-600" />
+                Buscar produtos, lojas e serviços
               </button>
-              {(categories ?? []).map((category) => (
-                <button
-                  key={category.id}
-                  type="button"
-                  onClick={() => setActiveCategoryId(category.id)}
-                  className={`shrink-0 rounded-2xl border px-4 py-2 text-sm font-semibold transition ${
-                    activeCategoryId === category.id
-                      ? "border-orange-300 bg-orange-50 text-orange-700"
-                      : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
-                  }`}
-                >
-                  {category.name}
-                </button>
-              ))}
-            </div>
 
-            <div className="flex gap-3 overflow-x-auto pb-1">
-              {QUICK_SEGMENTS.map((item) => (
-                <div
-                  key={item.label}
-                  className="flex min-w-[76px] flex-col items-center gap-2 rounded-2xl bg-slate-50 px-3 py-3 text-center text-xs font-semibold text-slate-700"
-                >
-                  <span className="text-2xl leading-none">{item.icon}</span>
-                  <span className="leading-tight">{item.label}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {FILTER_CHIPS.map((chip) => (
-                <button
-                  key={chip}
-                  type="button"
-                  className="shrink-0 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700"
-                  disabled
-                  title="Filtros em breve"
-                >
-                  {chip}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="container space-y-4 pb-4">
-            <div className="flex gap-3 overflow-x-auto pb-1">
-              {PROMO_BANNERS.map((banner) => (
-                <Link
-                  key={banner.id}
-                  href={banner.href}
-                  className="block min-w-[280px] flex-1 rounded-2xl bg-slate-50 px-4 py-4 shadow-sm transition hover:shadow-md"
-                >
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
-                    {banner.title}
-                  </p>
-                  <p className="mt-2 text-lg font-bold text-slate-900">
-                    {banner.subtitle}
-                  </p>
-                  <div className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-orange-600">
-                    {banner.cta}
-                    <ArrowRight className="h-4 w-4" />
-                  </div>
-                </Link>
-              ))}
-            </div>
-
-            <div className="flex items-center justify-between px-1">
-              <h3 className="text-lg font-bold text-slate-900">
-                {COLLECTION_CARD.title}
-              </h3>
-              <Link
-                href={COLLECTION_CARD.href}
-                className="text-sm font-semibold text-orange-600"
-              >
-                ver tudo
-              </Link>
-            </div>
-            <Link
-              href={COLLECTION_CARD.href}
-              className="block rounded-2xl bg-slate-900 text-white"
-            >
-              <div className="rounded-2xl bg-gradient-to-br from-slate-900 via-purple-800 to-purple-600 p-4">
-                <p className="text-xl font-extrabold leading-tight">
-                  {COLLECTION_CARD.cardTitle}
-                </p>
-                <p className="mt-2 text-sm text-slate-100">
-                  {COLLECTION_CARD.cardSubtitle}
-                </p>
-              </div>
-            </Link>
-          </div>
-
-          <div className="container pb-6">
-            <div className="space-y-3">
-              {visibleListings.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
-                  Nada encontrado nessa categoria por enquanto.
-                </div>
-              ) : (
-                visibleListings.map((item) => {
-                  const image =
-                    item.images?.find((img) => img.isPrimary)?.url ||
-                    item.images?.[0]?.url;
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {MOBILE_TABS.map((tab) => {
+                  const Icon = tab.icon;
                   return (
-                    <ListingCardCompact
-                      key={item.id}
-                      id={item.id}
-                      title={item.title}
-                      price={item.price}
-                      priceType={item.priceType}
-                      neighborhood={item.neighborhood ?? undefined}
-                      cityName={cities?.find((c) => c.id === item.cityId)?.name}
-                      images={image ? [{ url: image, isPrimary: true }] : []}
-                      seller={item.seller}
-                      type={item.type}
-                      isBoosted={Boolean(item.viewCount && item.viewCount > 100)}
-                    />
-                  );
-                })
-              )}
-            </div>
-          </div>
-
-          {openNearby.length > 0 && (
-            <div className="container pb-6">
-              <div className="mb-3 flex items-center justify-between px-1">
-                <h3 className="text-lg font-bold text-slate-900">
-                  Perto de você
-                </h3>
-                <Link
-                  href="/busca"
-                  className="text-sm font-semibold text-orange-600"
-                >
-                  ver todos
-                </Link>
-              </div>
-              <div className="space-y-3">
-                {openNearby.map((item) => {
-                  const image =
-                    item.images?.find((img) => img.isPrimary)?.url ||
-                    item.images?.[0]?.url;
-                  return (
-                    <ListingCardCompact
-                      key={`near-${item.id}`}
-                      id={item.id}
-                      title={item.title}
-                      price={item.price}
-                      priceType={item.priceType}
-                      neighborhood={item.neighborhood ?? undefined}
-                      cityName={cities?.find((c) => c.id === item.cityId)?.name}
-                      images={image ? [{ url: image, isPrimary: true }] : []}
-                      seller={item.seller}
-                      type={item.type}
-                      isBoosted
-                    />
+                    <Link
+                      key={tab.label}
+                      href={tab.href}
+                      className="flex min-w-[112px] items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm transition hover:border-orange-200 hover:bg-orange-50"
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span className="truncate">{tab.label}</span>
+                    </Link>
                   );
                 })}
               </div>
             </div>
-          )}
-        </section>
+          </section>
 
-        <section className="container pt-3 sm:pt-6">
+          <div className="container mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
+            {PROMO_BANNERS.map((banner) => (
+              <Link
+                key={`mobile-banner-${banner.id}`}
+                href={banner.href}
+                className="min-w-[250px] snap-center rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-black px-4 py-4 text-white shadow-lg"
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-orange-200">
+                  {banner.title}
+                </p>
+                <p className="mt-1 text-lg font-extrabold leading-tight">{banner.subtitle}</p>
+                <div className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-orange-200">
+                  {banner.cta}
+                  <ArrowRight className="h-4 w-4" />
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="container mt-3 grid grid-cols-4 gap-2">
+            {CATEGORY_SHORTCUTS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="flex min-h-[88px] flex-col items-center justify-between rounded-2xl border border-slate-100 bg-white p-3 text-center shadow-sm transition hover:border-orange-200 hover:shadow-md"
+                >
+                  <span
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold ${item.tone}`}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span className="text-[12px] font-semibold leading-tight text-slate-800">
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+
+          <AppInstallBanner
+            title="Use o aplicativo"
+            subtitle="Acesso rápido e fácil no app"
+            ctaLabel="Abrir"
+            ctaHref="/app"
+          />
+
+          <section className="bg-white">
+            <div className="container space-y-6 pt-4 pb-8">
+              <div className="rounded-[28px] border border-slate-200 bg-gradient-to-br from-orange-50 via-white to-slate-50 p-5 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="rounded-2xl bg-orange-100 p-3 text-orange-700">
+                    <HomeIcon className="h-5 w-5" />
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-700">
+                      Norte Vivo app
+                    </p>
+                    <h2 className="mt-1 font-display text-2xl font-black text-slate-900">
+                      Tudo da sua cidade na mão
+                    </h2>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      Guia local, lojas, serviços e delivery em um app leve.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  <Button
+                    className="h-11 rounded-2xl bg-slate-900 text-white hover:bg-slate-800"
+                    onClick={() => handleSearch("")}
+                  >
+                    <Search className="mr-2 h-4 w-4" />
+                    Explorar agora
+                  </Button>
+
+                  <Link href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE}>
+                    <Button
+                      variant="outline"
+                      className="h-11 w-full rounded-2xl border-slate-300 text-slate-900 hover:bg-slate-50"
+                    >
+                      <Store className="mr-2 h-4 w-4" />
+                      Divulgar negócio
+                    </Button>
+                  </Link>
+                </div>
+
+                <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+                  {FILTER_CHIPS.map((chip) => (
+                    <button
+                      key={chip}
+                      type="button"
+                      onClick={() =>
+                        handleSearch(chip === "Filtros" ? "" : chip.replace(" ", "+"))
+                      }
+                      className="shrink-0 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700"
+                    >
+                      {chip}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                {PILLARS.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={`mobile-${item.label}`}
+                      href={item.href}
+                      className="rounded-[24px] border border-slate-200 bg-slate-50 p-4 shadow-[0_6px_18px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="rounded-xl bg-white p-3 text-slate-900">
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                            {item.badge}
+                          </p>
+                          <h3 className="mt-1 font-display text-lg font-black text-slate-900">
+                            {item.label}
+                          </h3>
+                          <p className="mt-1 text-xs leading-5 text-slate-600">
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              <div className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-slate-900">Atalhos rápidos</p>
+                  <Link href="/busca" className="text-xs font-semibold text-orange-600">
+                    ver todos
+                  </Link>
+                </div>
+
+                <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                  {QUICK_SEGMENTS.map((item) => (
+                    <button
+                      key={item.label}
+                      type="button"
+                      onClick={() => handleSearch(item.label)}
+                      className="inline-flex shrink-0 items-center gap-2 rounded-full bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-800"
+                    >
+                      <span className="text-lg leading-none">{item.icon}</span>
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-slate-900">Abertos agora</p>
+                  <Link href="/busca" className="text-xs font-semibold text-orange-600">
+                    ver todos
+                  </Link>
+                </div>
+
+                <div className="mt-3 space-y-3">
+                  {openNearby.length === 0 ? (
+                    <p className="text-sm text-slate-500">
+                      Nenhuma loja aberta no momento. Volte em instantes.
+                    </p>
+                  ) : (
+                    openNearby.slice(0, 6).map((item) => {
+                      const image =
+                        item.images?.find((img) => img.isPrimary)?.url ||
+                        item.images?.[0]?.url;
+
+                      return (
+                        <ListingCardCompact
+                          key={`near-${item.id}`}
+                          id={item.id}
+                          title={item.title}
+                          price={item.price}
+                          priceType={item.priceType}
+                          neighborhood={item.neighborhood ?? undefined}
+                          cityName={cities?.find((c) => c.id === item.cityId)?.name}
+                          images={image ? [{ url: image, isPrimary: true }] : []}
+                          seller={item.seller}
+                          type={item.type}
+                          isBoosted
+                        />
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              <div className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-slate-900">
+                    Serviços & empresas
+                  </p>
+                  <Link href="/guia" className="text-xs font-semibold text-orange-600">
+                    ver guia
+                  </Link>
+                </div>
+
+                <div className="mt-3 space-y-3">
+                  {serviceProviders.length === 0 ? (
+                    <p className="text-sm text-slate-500">
+                      Em breve vamos mostrar prestadores e empresas da sua cidade aqui.
+                    </p>
+                  ) : (
+                    serviceProviders.slice(0, 6).map((item) => {
+                      const image =
+                        item.images?.find((img) => img.isPrimary)?.url ||
+                        item.images?.[0]?.url;
+
+                      return (
+                        <ListingCardCompact
+                          key={`service-${item.id}`}
+                          id={item.id}
+                          title={item.title}
+                          price={item.price}
+                          priceType={item.priceType}
+                          neighborhood={item.neighborhood ?? undefined}
+                          cityName={cities?.find((c) => c.id === item.cityId)?.name}
+                          images={image ? [{ url: image, isPrimary: true }] : []}
+                          seller={item.seller}
+                          type={item.type}
+                        />
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              <div className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-slate-900">Filtrar vitrine</p>
+                  <span className="text-xs font-semibold text-slate-500">{selectedCityName}</span>
+                </div>
+
+                <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                  <button
+                    type="button"
+                    onClick={() => setActiveCategoryId("all")}
+                    className={`shrink-0 rounded-full border px-3 py-2 text-xs font-semibold transition ${
+                      activeCategoryId === "all"
+                        ? "border-slate-900 bg-slate-900 text-white"
+                        : "border-slate-200 bg-slate-50 text-slate-800"
+                    }`}
+                  >
+                    Tudo
+                  </button>
+
+                  {(categories ?? []).slice(0, 10).map((category) => (
+                    <button
+                      key={`mobile-cat-${category.id}`}
+                      type="button"
+                      onClick={() => setActiveCategoryId(category.id)}
+                      className={`shrink-0 rounded-full border px-3 py-2 text-xs font-semibold transition ${
+                        activeCategoryId === category.id
+                          ? "border-orange-300 bg-orange-50 text-orange-700"
+                          : "border-slate-200 bg-white text-slate-800"
+                      }`}
+                    >
+                      {category.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-slate-900">
+                    Ofertas e produtos
+                  </p>
+                  <Link href="/busca" className="text-xs font-semibold text-orange-600">
+                    ver todos
+                  </Link>
+                </div>
+
+                <div className="mt-3 space-y-3">
+                  {visibleListings.slice(0, 6).map((item) => {
+                    const image =
+                      item.images?.find((img) => img.isPrimary)?.url ||
+                      item.images?.[0]?.url;
+
+                    return (
+                      <ListingCardCompact
+                        key={`list-${item.id}`}
+                        id={item.id}
+                        title={item.title}
+                        price={item.price}
+                        priceType={item.priceType}
+                        neighborhood={item.neighborhood ?? undefined}
+                        cityName={cities?.find((c) => c.id === item.cityId)?.name}
+                        images={image ? [{ url: image, isPrimary: true }] : []}
+                        seller={item.seller}
+                        type={item.type}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
+                <p className="text-sm font-semibold text-slate-900">
+                  Eventos e oportunidades
+                </p>
+
+                <div className="mt-3 space-y-3">
+                  {eventListings.length === 0 && jobListings.length === 0 ? (
+                    <p className="text-sm text-slate-500">
+                      Divulgue próximos eventos e vagas para eles aparecerem aqui.
+                    </p>
+                  ) : (
+                    <>
+                      {eventListings.slice(0, 3).map((item) => {
+                        const image =
+                          item.images?.find((image) => image.isPrimary)?.url ||
+                          item.images?.[0]?.url;
+                        const extra = parseHomeExtraData(item.extraDataJson);
+
+                        return (
+                          <Link
+                            key={`event-${item.id}`}
+                            href={`/anuncio/${item.id}`}
+                            className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 transition hover:border-blue-200 hover:bg-blue-50/60"
+                          >
+                            <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-100">
+                              {image ? (
+                                <img
+                                  src={image}
+                                  alt={item.title}
+                                  className="h-full w-full object-cover"
+                                />
+                              ) : (
+                                <CalendarDays className="h-5 w-5 text-slate-400" />
+                              )}
+                            </div>
+
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-blue-700">
+                                Evento
+                                <span className="h-1.5 w-1.5 rounded-full bg-blue-700" />
+                                {[item.neighborhood, cityNameById(item.cityId)]
+                                  .filter(Boolean)
+                                  .join(", ") || "Norte Pioneiro"}
+                              </div>
+                              <p className="mt-1 line-clamp-2 font-display text-base font-bold text-slate-900">
+                                {item.title}
+                              </p>
+                              {(extra.eventDate || extra.eventVenue) && (
+                                <p className="mt-1 text-xs font-semibold text-blue-700">
+                                  {[extra.eventDate, extra.eventVenue]
+                                    .filter(Boolean)
+                                    .join(" · ")}
+                                </p>
+                              )}
+                            </div>
+                          </Link>
+                        );
+                      })}
+
+                      {jobListings.slice(0, 3).map((item) => {
+                        const image =
+                          item.images?.find((image) => image.isPrimary)?.url ||
+                          item.images?.[0]?.url;
+                        const extra = parseHomeExtraData(item.extraDataJson);
+
+                        return (
+                          <Link
+                            key={`job-${item.id}`}
+                            href={`/anuncio/${item.id}`}
+                            className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-emerald-50 p-3 transition hover:border-emerald-200"
+                          >
+                            <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white">
+                              {image ? (
+                                <img
+                                  src={image}
+                                  alt={item.title}
+                                  className="h-full w-full object-cover"
+                                />
+                              ) : (
+                                <BriefcaseBusiness className="h-5 w-5 text-emerald-500" />
+                              )}
+                            </div>
+
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700">
+                                Vaga
+                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+                                {[item.neighborhood, cityNameById(item.cityId)]
+                                  .filter(Boolean)
+                                  .join(", ") || "Norte Pioneiro"}
+                              </div>
+                              <p className="mt-1 line-clamp-2 font-display text-base font-bold text-slate-900">
+                                {item.title}
+                              </p>
+                              {(extra.jobSalary || extra.jobMode) && (
+                                <p className="mt-1 text-xs font-semibold text-emerald-700">
+                                  {[extra.jobSalary, extra.jobMode]
+                                    .filter(Boolean)
+                                    .join(" · ")}
+                                </p>
+                              )}
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-slate-900">Cupons e destaques</p>
+                  <Link href={COLLECTION_CARD.href} className="text-xs font-semibold text-orange-600">
+                    ver tudo
+                  </Link>
+                </div>
+
+                <div className="flex gap-3 overflow-x-auto pb-1">
+                  {PROMO_BANNERS.map((banner) => (
+                    <Link
+                      key={banner.id}
+                      href={banner.href}
+                      className="block min-w-[240px] rounded-2xl bg-slate-50 px-4 py-4 shadow-sm transition hover:shadow-md"
+                    >
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+                        {banner.title}
+                      </p>
+                      <p className="mt-2 text-lg font-bold text-slate-900">
+                        {banner.subtitle}
+                      </p>
+                      <div className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-orange-600">
+                        {banner.cta}
+                        <ArrowRight className="h-4 w-4" />
+                      </div>
+                    </Link>
+                  ))}
+
+                  <Link
+                    href={COLLECTION_CARD.href}
+                    className="block min-w-[240px] rounded-2xl bg-slate-900 p-4 text-white shadow-sm transition hover:shadow-md"
+                  >
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-orange-200">
+                      {COLLECTION_CARD.title}
+                    </p>
+                    <p className="mt-2 text-lg font-extrabold leading-tight text-white">
+                      {COLLECTION_CARD.cardTitle}
+                    </p>
+                    <p className="mt-2 text-sm text-slate-100">
+                      {COLLECTION_CARD.cardSubtitle}
+                    </p>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div className="hidden md:block">
+          <section className="container pt-3 sm:pt-6">
           <div className="overflow-hidden rounded-[32px] bg-[linear-gradient(135deg,#0f172a_0%,#1d4ed8_45%,#f97316_130%)] px-5 py-6 text-white shadow-[0_20px_70px_rgba(15,23,42,0.18)] sm:px-8 sm:py-10 lg:px-10 lg:py-12">
             <div className="mx-auto max-w-6xl">
               <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
@@ -677,11 +1036,11 @@ export default function Home() {
                   </div>
 
                   <h1 className="mt-4 font-display text-3xl font-black leading-tight text-white sm:text-5xl">
-                    Tudo da sua cidade em um só lugar.
+                    Tudo da sua cidade em um sÃ³ lugar.
                   </h1>
 
                   <p className="mt-4 max-w-2xl text-sm leading-7 text-blue-50/90 sm:text-lg">
-                    Encontre empresas, serviços e produtos da sua região ou crie
+                    Encontre empresas, serviÃ§os e produtos da sua regiÃ£o ou crie
                     sua loja online e comece a aparecer para novos clientes em{" "}
                     <span className="font-bold text-white">
                       {selectedCityName}
@@ -708,8 +1067,8 @@ export default function Home() {
 
                   <div className="mt-6 grid gap-3 sm:grid-cols-3">
                     {[
-                      "Buscar serviços locais",
-                      "Encontrar lojas da região",
+                      "Buscar serviÃ§os locais",
+                      "Encontrar lojas da regiÃ£o",
                       "Ver produtos em destaque",
                     ].map((suggestion) => (
                       <button
@@ -729,19 +1088,19 @@ export default function Home() {
                       <p className="text-2xl font-black text-white">
                         {featuredListings.length || recentListings.length}
                       </p>
-                      <p className="text-sm text-blue-100">Anúncios ativos</p>
+                      <p className="text-sm text-blue-100">AnÃºncios ativos</p>
                     </div>
                     <div className="rounded-[22px] bg-white/10 p-4 backdrop-blur-sm">
                       <p className="text-2xl font-black text-white">
                         {companyHighlights.length}
                       </p>
-                      <p className="text-sm text-blue-100">Lojas visíveis</p>
+                      <p className="text-sm text-blue-100">Lojas visÃ­veis</p>
                     </div>
                     <div className="rounded-[22px] bg-white/10 p-4 backdrop-blur-sm">
                       <p className="text-2xl font-black text-white">
                         {serviceProviders.length}
                       </p>
-                      <p className="text-sm text-blue-100">Serviços</p>
+                      <p className="text-sm text-blue-100">ServiÃ§os</p>
                     </div>
                     <div className="rounded-[22px] bg-white/10 p-4 backdrop-blur-sm">
                       <p className="text-2xl font-black text-white">
@@ -790,7 +1149,7 @@ export default function Home() {
 
                   <div className="mt-5 rounded-[22px] bg-white/10 p-4">
                     <p className="text-base font-semibold text-white">
-                      Tem uma loja e ainda não tem site?
+                      Tem uma loja e ainda nÃ£o tem site?
                     </p>
                     <p className="mt-1 text-sm leading-6 text-blue-50/90">
                       Crie sua vitrine, publique seus produtos e receba contatos
@@ -806,8 +1165,8 @@ export default function Home() {
         <section className="container py-8 sm:py-10">
           <SectionHeader
             eyebrow="3 formas de usar"
-            title="Escolha a melhor porta de entrada para o que você precisa"
-            description="A Home agora guia melhor o usuário: primeiro ele entende o produto, depois escolhe como navegar dentro da plataforma."
+            title="Escolha a melhor porta de entrada para o que vocÃª precisa"
+            description="A Home agora guia melhor o usuÃ¡rio: primeiro ele entende o produto, depois escolhe como navegar dentro da plataforma."
           />
 
           <div className="grid gap-4 lg:grid-cols-3">
@@ -863,7 +1222,7 @@ export default function Home() {
           <SectionHeader
             eyebrow="Destaques da semana"
             title="Produtos patrocinados com mais visibilidade"
-            description="Essa é a área comercial mais forte da plataforma. Aqui ficam os anúncios impulsionados para gerar clique e venda."
+            description="Essa Ã© a Ã¡rea comercial mais forte da plataforma. Aqui ficam os anÃºncios impulsionados para gerar clique e venda."
             actionHref="/booster"
             actionLabel="Ver destaques"
           />
@@ -916,7 +1275,7 @@ export default function Home() {
                               listing.subcategory,
                             ]
                               .filter(Boolean)
-                              .join(" · ")}
+                              .join(" Â· ")}
                           </div>
 
                           <h3 className="mt-3 line-clamp-2 text-lg font-bold leading-6 text-slate-900">
@@ -946,6 +1305,7 @@ export default function Home() {
                     <div className="hidden sm:block">
                       <ListingCard
                         {...listing}
+                        createdAt={listing.createdAt ?? new Date()}
                         cityName={cityNameById(listing.cityId)}
                         categoryName={
                           categories?.find((category) => category.id === listing.categoryId)
@@ -961,7 +1321,7 @@ export default function Home() {
             <div className="rounded-[28px] border border-dashed border-amber-200 bg-white p-10 text-center">
               <Zap className="mx-auto h-12 w-12 text-amber-300" />
               <p className="mt-4 text-slate-500">
-                Assim que houver anúncios impulsionados, eles aparecerão aqui.
+                Assim que houver anÃºncios impulsionados, eles aparecerÃ£o aqui.
               </p>
             </div>
           )}
@@ -970,8 +1330,8 @@ export default function Home() {
         <section id="guia-local" className="container py-8 sm:py-10">
           <SectionHeader
             eyebrow="Guia local"
-            title={`Serviços e contatos essenciais em ${selectedCityName}`}
-            description="O guia precisa ser útil de verdade. Ele deve resolver rápido a busca por telefones, empresas e contatos da cidade."
+            title={`ServiÃ§os e contatos essenciais em ${selectedCityName}`}
+            description="O guia precisa ser Ãºtil de verdade. Ele deve resolver rÃ¡pido a busca por telefones, empresas e contatos da cidade."
             actionHref="/guia"
             actionLabel="Abrir guia local"
           />
@@ -1010,8 +1370,8 @@ export default function Home() {
         <section id="lojas-empresas" className="container py-2 sm:py-4">
           <SectionHeader
             eyebrow="Lojas em destaque"
-            title="Negócios locais que já podem vender online pelo Norte Vivo"
-            description="Aqui está seu diferencial mais forte: dar presença digital para quem vende na região, mesmo sem ter site próprio."
+            title="NegÃ³cios locais que jÃ¡ podem vender online pelo Norte Vivo"
+            description="Aqui estÃ¡ seu diferencial mais forte: dar presenÃ§a digital para quem vende na regiÃ£o, mesmo sem ter site prÃ³prio."
             actionHref="/lojas"
             actionLabel="Ver lojas"
           />
@@ -1030,7 +1390,7 @@ export default function Home() {
                   const subtitle =
                     categories?.find((category) => category.id === item.categoryId)?.name ||
                     item.subcategory ||
-                    "Negócio local";
+                    "NegÃ³cio local";
 
                   return (
                     <Link
@@ -1067,7 +1427,7 @@ export default function Home() {
                         </div>
 
                         <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-500">
-                          Conheça a loja, veja os produtos publicados e fale
+                          ConheÃ§a a loja, veja os produtos publicados e fale
                           direto com quem vende.
                         </p>
 
@@ -1107,7 +1467,7 @@ export default function Home() {
                   const subtitle =
                     categories?.find((category) => category.id === item.categoryId)?.name ||
                     item.subcategory ||
-                    "Negócio local";
+                    "NegÃ³cio local";
 
                   return (
                     <article
@@ -1172,7 +1532,7 @@ export default function Home() {
 
                         <p className="mt-4 line-clamp-2 text-sm leading-6 text-slate-500">
                           Veja a vitrine da loja, os itens publicados e os canais
-                          de contato disponíveis.
+                          de contato disponÃ­veis.
                         </p>
 
                         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-500">
@@ -1184,7 +1544,7 @@ export default function Home() {
                           {(item.seller?.whatsapp || item.whatsapp) && (
                             <span className="inline-flex items-center gap-1.5 text-emerald-700">
                               <Phone className="h-4 w-4" />
-                              WhatsApp disponível
+                              WhatsApp disponÃ­vel
                             </span>
                           )}
                         </div>
@@ -1203,7 +1563,7 @@ export default function Home() {
             <div className="rounded-[28px] border border-dashed border-slate-200 bg-white p-10 text-center">
               <Building2 className="mx-auto h-12 w-12 text-slate-300" />
               <p className="mt-4 text-slate-500">
-                As primeiras lojas e empresas aparecerão aqui.
+                As primeiras lojas e empresas aparecerÃ£o aqui.
               </p>
             </div>
           )}
@@ -1213,7 +1573,7 @@ export default function Home() {
           <SectionHeader
             eyebrow="Marketplace regional"
             title="Novidades e oportunidades recentes"
-            description="Depois que o usuário entende o produto, ele entra no fluxo natural de descoberta: anúncios, produtos e oportunidades da região."
+            description="Depois que o usuÃ¡rio entende o produto, ele entra no fluxo natural de descoberta: anÃºncios, produtos e oportunidades da regiÃ£o."
             actionHref="/busca"
             actionLabel="Ver mais"
           />
@@ -1263,11 +1623,11 @@ export default function Home() {
                             {listing.type === "food"
                               ? "Comida"
                               : listing.type === "service"
-                              ? "Serviço"
+                              ? "ServiÃ§o"
                               : listing.type === "property"
-                              ? "Imóvel"
+                              ? "ImÃ³vel"
                               : listing.type === "vehicle"
-                              ? "Veículo"
+                              ? "VeÃ­culo"
                               : "Produto"}
                           </span>
                         </div>
@@ -1288,6 +1648,7 @@ export default function Home() {
                   <ListingCard
                     key={listing.id}
                     {...listing}
+                    createdAt={listing.createdAt ?? new Date()}
                     cityName={cityNameById(listing.cityId)}
                     categoryName={
                       categories?.find((category) => category.id === listing.categoryId)
@@ -1301,7 +1662,7 @@ export default function Home() {
             <div className="rounded-[28px] border border-dashed border-slate-200 bg-white p-12 text-center">
               <LayoutGrid className="mx-auto h-12 w-12 text-slate-300" />
               <p className="mt-4 text-slate-500">
-                Assim que novos anúncios entrarem no portal, a Home vai refletir
+                Assim que novos anÃºncios entrarem no portal, a Home vai refletir
                 isso aqui.
               </p>
             </div>
@@ -1312,8 +1673,8 @@ export default function Home() {
           <div className="container">
             <SectionHeader
               eyebrow="O que comer hoje"
-              title="Bateu a fome? Peça agora nas melhores lojas abertas"
-              description="Essa seção ajuda o usuário no dia a dia e aumenta recorrência de visita ao site."
+              title="Bateu a fome? PeÃ§a agora nas melhores lojas abertas"
+              description="Essa seÃ§Ã£o ajuda o usuÃ¡rio no dia a dia e aumenta recorrÃªncia de visita ao site."
               actionHref="/busca?q=lanche"
               actionLabel="Ver lanches"
             />
@@ -1400,6 +1761,7 @@ export default function Home() {
                       <div className="hidden sm:block">
                         <ListingCard
                           {...listing}
+                          createdAt={listing.createdAt ?? new Date()}
                           cityName={cityName}
                           categoryName="Delivery"
                         />
@@ -1412,7 +1774,7 @@ export default function Home() {
               <div className="rounded-[28px] bg-white p-10 text-center shadow-sm">
                 <ShoppingBag className="mx-auto h-12 w-12 text-orange-200" />
                 <p className="mt-4 text-slate-500">
-                  Assim que houver lanches de lojas abertas agora, eles aparecerão aqui.
+                  Assim que houver lanches de lojas abertas agora, eles aparecerÃ£o aqui.
                 </p>
               </div>
             )}
@@ -1421,11 +1783,11 @@ export default function Home() {
 
         <section className="container py-8 sm:py-10">
           <SectionHeader
-            eyebrow="Serviços locais"
-            title="Profissionais e prestadores com contato rápido"
-            description="Essa seção ajuda a transformar o site em utilidade diária para a cidade, não só em vitrine de anúncios."
+            eyebrow="ServiÃ§os locais"
+            title="Profissionais e prestadores com contato rÃ¡pido"
+            description="Essa seÃ§Ã£o ajuda a transformar o site em utilidade diÃ¡ria para a cidade, nÃ£o sÃ³ em vitrine de anÃºncios."
             actionHref="/busca?q=servicos"
-            actionLabel="Ver serviços"
+            actionLabel="Ver serviÃ§os"
           />
 
           {serviceProviders.length > 0 ? (
@@ -1504,7 +1866,7 @@ export default function Home() {
             <div className="rounded-[28px] border border-dashed border-slate-200 bg-white p-8 text-center">
               <HeartHandshake className="mx-auto h-10 w-10 text-violet-300" />
               <p className="mt-4 text-slate-500">
-                Os primeiros prestadores com contato rápido aparecerão aqui.
+                Os primeiros prestadores com contato rÃ¡pido aparecerÃ£o aqui.
               </p>
             </div>
           )}
@@ -1520,10 +1882,10 @@ export default function Home() {
 
                 <div className="min-w-0">
                   <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">
-                    Eventos da região
+                    Eventos da regiÃ£o
                   </p>
                   <p className="mt-2 text-sm leading-6 text-slate-500">
-                    Feiras, shows, encontros e atrações locais em um só lugar.
+                    Feiras, shows, encontros e atraÃ§Ãµes locais em um sÃ³ lugar.
                   </p>
                 </div>
               </div>
@@ -1575,7 +1937,7 @@ export default function Home() {
                               <p className="mt-1 truncate text-xs font-medium text-blue-700">
                                 {[extra.eventDate, extra.eventVenue]
                                   .filter(Boolean)
-                                  .join(" · ")}
+                                  .join(" Â· ")}
                               </p>
                             )}
 
@@ -1592,8 +1954,8 @@ export default function Home() {
               ) : (
                 <div className="mt-5 rounded-[22px] border border-dashed border-slate-200 bg-slate-50 p-5">
                   <p className="text-sm leading-6 text-slate-500">
-                    Ainda não há eventos publicados. Use o Norte Vivo para
-                    divulgar a próxima atração da sua região.
+                    Ainda nÃ£o hÃ¡ eventos publicados. Use o Norte Vivo para
+                    divulgar a prÃ³xima atraÃ§Ã£o da sua regiÃ£o.
                   </p>
                 </div>
               )}
@@ -1610,7 +1972,7 @@ export default function Home() {
                     Vagas de emprego
                   </p>
                   <p className="mt-2 text-sm leading-6 text-slate-500">
-                    Vagas locais, trabalhos rápidos e oportunidades reais da região.
+                    Vagas locais, trabalhos rÃ¡pidos e oportunidades reais da regiÃ£o.
                   </p>
                 </div>
               </div>
@@ -1656,7 +2018,7 @@ export default function Home() {
                             <p className="mt-1 truncate text-xs font-medium text-emerald-700">
                               {[extra.jobSalary, extra.jobMode]
                                 .filter(Boolean)
-                                .join(" · ")}
+                                .join(" Â· ")}
                             </p>
                           )}
                         </div>
@@ -1667,8 +2029,8 @@ export default function Home() {
               ) : (
                 <div className="mt-5 rounded-[22px] border border-dashed border-slate-200 bg-slate-50 p-5">
                   <p className="text-sm leading-6 text-slate-500">
-                    Ainda não há vagas publicadas. Em breve essa área pode reunir
-                    empregos e freelas da região.
+                    Ainda nÃ£o hÃ¡ vagas publicadas. Em breve essa Ã¡rea pode reunir
+                    empregos e freelas da regiÃ£o.
                   </p>
                 </div>
               )}
@@ -1685,12 +2047,12 @@ export default function Home() {
                 </p>
 
                 <h2 className="mt-3 font-display text-3xl font-black">
-                  Sua loja pode aparecer para toda a região, mesmo sem ter site.
+                  Sua loja pode aparecer para toda a regiÃ£o, mesmo sem ter site.
                 </h2>
 
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-200 sm:text-base">
-                  Cadastre produtos, serviços, contatos, horário de funcionamento
-                  e impulsione o que você quer vender com mais destaque dentro da
+                  Cadastre produtos, serviÃ§os, contatos, horÃ¡rio de funcionamento
+                  e impulsione o que vocÃª quer vender com mais destaque dentro da
                   plataforma.
                 </p>
               </div>
@@ -1699,7 +2061,7 @@ export default function Home() {
                 <Link href={isAuthenticated ? "/anunciante/novo" : LOGIN_ROUTE}>
                   <Button className="h-12 w-full rounded-2xl bg-white text-slate-900 hover:bg-slate-100">
                     <Store className="mr-2 h-4 w-4" />
-                    Criar anúncio
+                    Criar anÃºncio
                   </Button>
                 </Link>
 
@@ -1713,9 +2075,14 @@ export default function Home() {
             </div>
           </div>
         </section>
+        </div>
       </main>
 
-      <Footer />
+      <div className="hidden md:block">
+        <Footer />
+      </div>
     </div>
   );
 }
+
+

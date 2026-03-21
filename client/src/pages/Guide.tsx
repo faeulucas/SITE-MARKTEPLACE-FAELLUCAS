@@ -13,6 +13,7 @@ import {
   Phone,
   Sparkles,
   Building2,
+  Store,
 } from "lucide-react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
