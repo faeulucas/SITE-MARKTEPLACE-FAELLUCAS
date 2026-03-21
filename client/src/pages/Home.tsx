@@ -513,7 +513,7 @@ export default function Home() {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                    Sua regi�o
+                    Sua região
                   </p>
                   <p className="text-base font-bold text-slate-900">{selectedCityName}</p>
                 </div>
@@ -539,7 +539,7 @@ export default function Home() {
                 onClick={() => handleSearch("")}
               >
                 <Search className="h-4 w-4 text-orange-600" />
-                Buscar produtos, lojas e servi�os
+                Buscar produtos, lojas e serviços
               </button>
 
               <div className="flex gap-2 overflow-x-auto pb-1">
@@ -603,7 +603,7 @@ export default function Home() {
 
           <AppInstallBanner
             title="Use o aplicativo"
-            subtitle="Acesso r�pido e f�cil no app"
+            subtitle="Acesso rápido e fácil no app"
             ctaLabel="Abrir"
             ctaHref="/app"
           />
@@ -621,10 +621,10 @@ export default function Home() {
                       Norte Vivo app
                     </p>
                     <h2 className="mt-1 font-display text-2xl font-black text-slate-900">
-                      Tudo da sua cidade na m�o
+                      Tudo da sua cidade na mão
                     </h2>
                     <p className="mt-2 text-sm leading-6 text-slate-600">
-                      Guia local, lojas, servi�os e delivery em um app leve.
+                      Guia local, lojas, serviços e delivery em um app leve.
                     </p>
                   </div>
                 </div>
@@ -644,7 +644,7 @@ export default function Home() {
                       className="h-11 w-full rounded-2xl border-slate-300 text-slate-900 hover:bg-slate-50"
                     >
                       <Store className="mr-2 h-4 w-4" />
-                      Divulgar neg�cio
+                      Divulgar negócio
                     </Button>
                   </Link>
                 </div>
@@ -697,7 +697,7 @@ export default function Home() {
 
               <div className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-slate-900">Atalhos r�pidos</p>
+                  <p className="text-sm font-semibold text-slate-900">Atalhos rápidos</p>
                   <Link href="/busca" className="text-xs font-semibold text-orange-600">
                     ver todos
                   </Link>
@@ -760,7 +760,7 @@ export default function Home() {
               <div className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate-900">
-                    Servi�os & empresas
+                    Serviços & empresas
                   </p>
                   <Link href="/guia" className="text-xs font-semibold text-orange-600">
                     ver guia
@@ -874,7 +874,7 @@ export default function Home() {
                 <div className="mt-3 space-y-3">
                   {eventListings.length === 0 && jobListings.length === 0 ? (
                     <p className="text-sm text-slate-500">
-                      Divulgue pr�ximos eventos e vagas para eles aparecerem aqui.
+                      Divulgue próximos eventos e vagas para eles aparecerem aqui.
                     </p>
                   ) : (
                     <>
@@ -917,7 +917,7 @@ export default function Home() {
                                 <p className="mt-1 text-xs font-semibold text-blue-700">
                                   {[extra.eventDate, extra.eventVenue]
                                     .filter(Boolean)
-                                    .join(" � ")}
+                                    .join(" · ")}
                                 </p>
                               )}
                             </div>
@@ -964,7 +964,7 @@ export default function Home() {
                                 <p className="mt-1 text-xs font-semibold text-emerald-700">
                                   {[extra.jobSalary, extra.jobMode]
                                     .filter(Boolean)
-                                    .join(" � ")}
+                                    .join(" · ")}
                                 </p>
                               )}
                             </div>
